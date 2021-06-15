@@ -12,8 +12,13 @@ _store_parser.add_argument("contact", type=str, required=True, help="{error_msg}
 
 
 class StoreList(Resource):
+    @jwt_required()
     def get(self):
-        stores = StoreModel.find_all()
+        '''
+        REturns all the stores of a particular user
+        '''
+        uid = get_jwt_identity()
+        stores = StoreModel.find_by_user_id(uid)
         # print('stores:', StoreModel.query.all())
         if stores:
             # print('stores -------------------:', stores[0].json())
@@ -22,6 +27,9 @@ class StoreList(Resource):
     
     @jwt_required()
     def post(self):
+        '''
+        Add a store to particular user
+        '''
         id = get_jwt_identity()
         # TODO:
         #  1. check whether this user has necessary access to change something in the store.
@@ -40,12 +48,14 @@ class StoreList(Resource):
 
 
 class Store(Resource):
-
+    @jwt_required()
     def get(self, id):
+        '''
+        GET method, to get the complete product list of a store.
+        '''
         store = StoreModel.find_by_id(id)
-        print(store.name)
         if store:
-            return store.json(), 200
+            return store.productlist_json(), 200
         return {"message": "Store Not Found"}, 404
 
     

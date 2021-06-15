@@ -14,15 +14,18 @@ class ProductModel(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80))
     # description = db.Column(db.String(500))
-    # category = db.Column(db.String(40), nullable=False)
+    category = db.Column(db.String(40), nullable=False)
+    actual_price = db.Column(db.Float(precision=2), nullable=False)
+    wholesale_price = db.Column(db.Float(precision=2), nullable=False)
+    retail_price = db.Column(db.Float(precision=2), nullable=False)
+    quantity = db.Column(db.Integer,nullable=False)
+    
     # brand_name = 
     # create_by = 
     # created_at = 
     # updated_by = 
     # updated_at = 
     # public = 
-    price = db.Column(db.Float(precision=2), nullable=False)
-    quantity = db.Column(db.Integer, nullable=False)
     # manufactured_on = db.dColumn(db.DateTime, nullable=False)
     # expiries_on = db.Column(db.DateTime, nullable=False)
     # imported_on 
@@ -35,16 +38,22 @@ class ProductModel(db.Model):
     # price = db.Column(db.Float(precision=2))
     # price = db.Column(db.Float(precision=2))
 
-    def __init__(self, name, price, quantity):
+    def __init__(self, name, category, actual_price, wholesale_price, retail_price, quantity):
         self.name = name
-        self.price = price
+        self.category = category
+        self.actual_price = actual_price
+        self.wholesale_price = wholesale_price
+        self.retail_price = retail_price
         self.quantity = quantity
 
     def json(self):
         return {
             "id": self.id,
             "name": self.name,
-            "price": self.price,
+            "category":self.category,
+            "actual_price": self.actual_price,
+            "wholesale_price": self.wholesale_price,
+            "retail_price": self.retail_price,
             "quantity": self.quantity,
         }
 
@@ -64,7 +73,6 @@ class ProductModel(db.Model):
         #     firstname.like(search_var1),
         #     lastname.like(search_var2)
         #     )
-
         return cls.query.filter(cls.name.like("%" + name + "%"))
 
     @classmethod

@@ -85,4 +85,4 @@ https://mymemory.translated.net/doc/spec.php
 
 ## Hiccups:
 1. Not able to add same product across multiple stores in products table.
-2. How to maintain logically different set of tables for different clients. 
+2. How to maintain logically different set of tables for different clients.

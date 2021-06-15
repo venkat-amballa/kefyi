@@ -5,14 +5,20 @@ from flask_restful import Api
 from flask_jwt_extended import JWTManager
 
 from resources.home import Home
-from resources.product import Product, ProductList
+# from resources.product import Product, ProductList
+from resources.product import Product
+
 from resources.user import UserRegister, UserLogin, User, TokenRefresh, UserLogout
 from resources.store import Store, StoreList
+
+from resources.billing import Billing
 
 from block_list import BLOCKLIST
 
 import utils
-
+'''
+400 - BAD REQUEST, for duplicate records
+'''
 app = Flask(__name__)
 # app.config['BUNDLE_ERRORS'] = True
 
@@ -62,14 +68,14 @@ Callbacks to override default responses in callbacks
 def expired_token_callback(jwt_header, jwt_payload):
     return {
         "message": "The token has expired", 
-        "error": "token_expired"
+        "error_code": "token_expired"
     }, 401
 
 @jwt.invalid_token_loader
 def invalid_token_callback(error):
     return {
         "message": "Invalid token", 
-        "error": "invalid_token", 
+        "error_code": "invalid_token", 
         "error":error
         }, 401
 
@@ -77,7 +83,7 @@ def invalid_token_callback(error):
 def unauthorized_callback(error):
     return {
         "message": "provide access token", 
-        "error":"authorisation_required", 
+        "error_code":"authorisation_required", 
         "error":error
         }, 401
 
@@ -97,8 +103,10 @@ def revoked_token_callback():
 
 api.add_resource(Home, "/")
 
-api.add_resource(ProductList, "/products")
-api.add_resource(Product, "/products/<string:name>")
+# api.add_resource(ProductList, "/all_products")
+api.add_resource(Product, "/products")
+
+api.add_resource(Billing, "/billing")
 
 api.add_resource(StoreList, "/stores")
 api.add_resource(Store, "/stores/<int:id>")

@@ -6,8 +6,14 @@ from flask_jwt_extended import jwt_required, get_jwt, get_jwt_identity
 from models.product import ProductModel
 from models.store import StoreModel
 
+from config.errors import errors
 
+'''
 class ProductList(Resource):
+    \'''
+    TODO:
+    Remove this functinality not required
+    \'''
     @jwt_required(optional=True)
     def get(self):
         user_id = get_jwt_identity()
@@ -33,81 +39,101 @@ class ProductList(Resource):
                 "Products": [product.name for product in products],
                 "message": "for more results, Login reqiuired"
             }, 200
-
-        
+'''
 
 class Product(Resource):
-    parser = reqparse.RequestParser(bundle_errors=True)
-    parser.add_argument(
-        "price", type=float, required=True, help="Invalid Amount, {error_msg}"
-    )
-    parser.add_argument(
-        "quantity", type=int, required=True, help="Invalid Quantity: {error_msg}"
-    )
-    parser.add_argument(
-        "store_id",  type=int, required=False, help="Store id: {error_msg}"
-    )
+    parser_product = reqparse.RequestParser(bundle_errors=True)
+    parser_product.add_argument("name", type=str, required=True, help="Product name, error: {error_msg}")
+    parser_product.add_argument("actual_price", type=float, required=True, help="Invalid Actual AMount, error: {error_msg}")
+    parser_product.add_argument("wholesale_price", type=float, required=True, help="Invalid Wholsesale Amount, error: {error_msg}")
+    parser_product.add_argument("retail_price", type=float, required=True, help="Invalid Retail Amount, error: {error_msg}")
+    parser_product.add_argument("quantity", type=int, required=True, help="Invalid Quantity: error: {error_msg}")
+    parser_product.add_argument("category", type=str, required=True, help="Category name, error: {error_msg}")
+    parser_product.add_argument("store_id",  type=int, required=False, help="Store id: error: {error_msg}")
 
+    parser_id = reqparse.RequestParser(bundle_errors=True)
+    parser_id.add_argument("id", type=int, required=True, help="product id, error: {error_msg}")
+    # parser_id.add_argument("name", type=str, required=False, help="product name, error: {error_msg}")
+    parser_product.add_argument("actual_price", type=float, required=True, help="Invalid Actual AMount, error: {error_msg}")
+    parser_id.add_argument("wholesale_price", type=float, required=False, help="wholesale price, error: {error_msg}")
+    parser_id.add_argument("retail_price", type=float, required=False, help="retail price, error: {error_msg}")
+    parser_id.add_argument("quantity", type=float, required=False, help="product quantity, error: {error_msg}")
+    parser_id.add_argument("category", type=str, required=False, help="product category, error: {error_msg}")
+    
     @jwt_required()
-    def get(self, name):
+    def get(self):
         # find by name
-        product = ProductModel.find_by_name(name)
+        data = Product.parser_id.parse_args()
+
+        product = ProductModel.find_by_id(data.get("id", None))
         if product:
             return product.json(), 200
         return {"message": "Product Not Found"}, 404
 
     @jwt_required()
-    def post(self, name):
+    def post(self):
         '''
         Add products to a store, owned by a user.
         '''
         # JWT required
         # TODO:
-        # Find wherther the user has access to this store.
-
-        data = Product.parser.parse_args()
+        # Find wherther the user has access to this store, only allow if he does.
+        data = Product.parser_product.parse_args()
+        name = data.get("name", None)
+        if name is None:
+            return {"status":False, "error_code":"PRODUCT_NAME_REQUIRED","message": "Product name is required"}, 400
+        
         store = StoreModel.find_by_id(data.store_id)
         if not store:
-            return {"message": "No store with that id"}
+            return {"status":False, "error_code":"INVALID_STORE","message": "No store with the given id"}, 400
         # check the user access to the store.
-
-        if ProductModel.find_by_name(name):
-            return {"message": "There exists an Product with the same name"}
         
-        print(data)
-        product = ProductModel(name, price=data["price"], quantity=data["quantity"])
-        # product.stores.append(store)
+        if ProductModel.find_by_name(name):
+            return {"status":False, "error_code":"PRODUCT_NAME_INVALID","message": "There exists an Product with the same name"}, 400
+        
+        # deleting the store_id before passing it to ProductModel
+        del data["store_id"]
+        product = ProductModel(**data)
+        # saving only in store.products is enough and product.save_to_db() isn't needed.
         store.products.append(product)
         try:
             product.save_to_db() # save the product to product db
             store.save_to_db()   # save the store after adding the product.
         except Exception as e:
             return {
-                "error": str(e),
-                "message": "Some Error Occured while inserting the data",
-                "info": "Insertion into product or store db failed"}, 503
+                "status": False,
+                "error_code":"DB_INSERTION_ERROR",
+                "message": "Some Error Occured while inserting the data. (Insertion into product or store db failed)"
+                }, 400
 
-        return product.json(), 201
+        return {"stauts":True, "message":"Insertion of the product is successfull"}, 201
 
     @jwt_required(fresh=True)
-    def put(self, name):
+    def put(self):
         # JWT required
-        data = Product.parser.parse_args()
+        data = Product.parser_id.parse_args()
         # NOTE-THIS
         # data = request.json
-
-        print(data)
-        product = ProductModel.find_by_name(name)
+        product = ProductModel.find_by_id(data["id"])
 
         if product:
-            product.price = data.get("price", product.price)
+            product.wholesale_price = data.get("wholesale_price", product.wholesale_price)
+            product.retail_price = data.get("retail_price", product.retail_price)
             product.quantity = data.get("quantity", product.quantity)
+            product.category = data.get("category", product.category)
         else:
-            product = ProductModel(name, **data)
+            return {"status":False, "error_code":"PRODUCT_NOT_DOUND", "message":"No product with the given id, to update"}, 400
+        # TODO
+        # PUT method doesnot support any product creation, if there is no product with given id, returns an error.
+        # else:
+        #     product = ProductModel(name, **data)
+        try:
+            product.save_to_db()
+        except Exception as error:
+            error_dict = errors['DB']['DB_INSERTION_ERROR']
+            return error_dict['RESPONSE'],error_dict['STATUS_CODE'] 
 
-        product.save_to_db()
-
-        return product.json(), 200
+        return {"status":True, "message":"Product update successfull"}, 200
 
     @jwt_required(fresh=True)
     def delete(self, name):

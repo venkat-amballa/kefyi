@@ -57,7 +57,7 @@ class UserRegister(Resource):
         except Exception:
             return {"message": "Error while creating user, in db"}, 500
 
-        return {"message": user.json()}, 201
+        return {"status":True, "message": user.json()}, 201
 
 _user_parser = reqparse.RequestParser(bundle_errors=True)
 _user_parser.add_argument(

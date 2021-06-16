@@ -1,3 +1,5 @@
+import os
+
 class Config(object):
     DEBUG = False
     TESTING = False
@@ -6,21 +8,24 @@ class Config(object):
 
 class ProdConfig(Config):
     ENV = "Production"
-    SQLALCHEMY_DATABASE_URI = "sqlite:///prod.db"
+    # app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///prod.db')
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL', 'sqlite:///prod.db')
     JWT_SECRET_KEY = "thisisnotsomerandomkey,iwillchangeitforprod!"
     
 
 class DevConfig(Config):
     ENV = "Development"
     DEBUG = True
-    SQLALCHEMY_DATABASE_URI = "sqlite:///data.db"
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL', 'sqlite:///data.db')
+    # SQLALCHEMY_DATABASE_URI = "sqlite:///data.db"
     JWT_SECRET_KEY = "thisissomerandomkey,iwillchangeit!"
     
 
 class StageConfig(Config):
     ENV = "Stage"
     TESTING = True
-    SQLALCHEMY_DATABASE_URI = "sqlite:///stage.db"
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL', 'sqlite:///stage.db')
+    # SQLALCHEMY_DATABASE_URI = "sqlite:///stage.db"
     JWT_SECRET_KEY = "thisissomerandomkey,iwillchangeitforstage!"
     
 

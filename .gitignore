@@ -5,3 +5,4 @@ log.txt
 db_relations/
 flask_sqlalchemy_basics/
 data.db
+data/

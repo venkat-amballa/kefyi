@@ -12,7 +12,7 @@ class StoreModel(db.Model):
     contact = db.Column(db.String(50))
     # user_id is the owner id of the store
     user_id = db.Column(db.Integer, db.ForeignKey('users.id')) # foreign key
-    products = db.relationship('ProductModel', secondary=store_product, backref = db.backref('stores',  lazy=True))
+    products = db.relationship('ProductModel', secondary=store_product, backref = db.backref('store',  lazy=True))
     # type = grocery, medical, clothes, electronic etc
     # id
     # name
@@ -42,6 +42,10 @@ class StoreModel(db.Model):
     @classmethod
     def find_by_id(cls, id):
         return cls.query.filter_by(id=id).first()
+    
+    @classmethod
+    def find_by_user_id(cls, user_id):
+        return cls.query.filter_by(user_id=user_id).all()
 
     @classmethod
     def find_by_name(cls, name):
@@ -57,6 +61,12 @@ class StoreModel(db.Model):
             "name": self.name,
             "address": self.address,
             "contact": self.contact,
+            "user_id":self.user_id
+        }
+
+    def productlist_json(self):
+        return {
+            "id": self.id,
             "products": [product.json() for product in self.products],
             "user_id":self.user_id
         }

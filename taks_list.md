@@ -70,6 +70,5 @@ On
 
 
 ## Hiccups:
-1. Not able to add same product for other stores in products table.
-A. Change primary k
+1. Not able to add same product across multiple stores in products table.
 2. How to maintain logically different set of tables for different clients.

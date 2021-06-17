@@ -21,6 +21,8 @@ import utils
 '''
 app = Flask(__name__)
 # app.config['BUNDLE_ERRORS'] = True
+env = os.environ['ENV']
+utils.load_config(app, env)
 
 api = Api(app)
 
@@ -118,11 +120,9 @@ api.add_resource(UserLogout, "/logout")
 
 api.add_resource(TokenRefresh, "/refresh")
 
+
 if __name__ == "__main__":
     from db import db
-    env = os.environ['ENV']
-    utils.load_config(app, env)
-
     db.init_app(app)
    
     app.run(port=5000)

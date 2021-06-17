@@ -6,7 +6,7 @@ from flask_jwt_extended import jwt_required, get_jwt, get_jwt_identity
 from models.product import ProductModel
 from models.store import StoreModel
 
-from config.errors import errors
+from configs.errors import errors
 
 '''
 class ProductList(Resource):

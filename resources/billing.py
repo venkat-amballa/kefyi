@@ -3,7 +3,7 @@ from flask import request
 
 from models.billing import BillingHelper
 
-from config.errors import errors
+from configs.errors import errors
 
 DB_INSERT_ERROR = errors["DB"]["DB_INSERTION_ERROR"]
 

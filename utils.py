@@ -1,4 +1,4 @@
-from config import config
+from configs import config
 
 ENVS = ["DEV", "STAGE", "PROD"]
 

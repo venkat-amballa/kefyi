@@ -20,9 +20,13 @@ import utils
 400 - BAD REQUEST, for duplicate records
 '''
 app = Flask(__name__)
-# app.config['BUNDLE_ERRORS'] = True
-env = os.environ['ENV']
-utils.load_config(app, env)
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///data.db') # 'sqlite:///data.db' # the database can be anytype like: postgresql, mysql etc instead of sqlite
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.secret_key = '#@%~4Lo*)+_=^'
+app.config['BUNDLE_ERRORS'] = True
+app.config['PROPAGATE_EXCEPTIONS'] = True
+# env = os.environ['ENV']
+# utils.load_config(app, env)
 
 api = Api(app)
 

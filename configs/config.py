@@ -10,7 +10,7 @@ class Config(object):
 class ProdConfig(Config):
     ENV = "Production"
     # app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///prod.db')
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL', 'sqlite:///prod.db')
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL', 'sqlite:///prod.db').replace("://", "ql://", 1) 
     JWT_SECRET_KEY = "#^Uo8=_%$#n).<|@"
     
 

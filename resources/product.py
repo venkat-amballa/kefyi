@@ -107,7 +107,7 @@ class Product(Resource):
                 "message": "Some Error Occured while inserting the data. (Insertion into product or store db failed)"
                 }, 400
 
-        return {"stauts":True, "message":"Insertion of the product is successfull"}, 201
+        return {"status":True, "message":"Insertion of the product is successfull"}, 201
 
     @jwt_required(fresh=True)
     def put(self):
@@ -146,4 +146,4 @@ class Product(Resource):
         if product:
             product.delete_from_db()
             return {"Status": "Deleted Successfully"}, 200
-        return {"Status": "Cant delete, Product not Found"}, 404
+        return {"status": "Cant delete, Product not Found"}, 404

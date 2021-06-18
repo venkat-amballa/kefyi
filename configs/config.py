@@ -4,6 +4,7 @@ class Config(object):
     DEBUG = False
     TESTING = False
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    BUNDLE_ERRORS = True
     PROPAGATE_EXCEPTIONS = True
 
 class ProdConfig(Config):

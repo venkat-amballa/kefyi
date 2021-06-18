@@ -40,6 +40,16 @@ class ProductList(Resource):
                 "message": "for more results, Login reqiuired"
             }, 200
 '''
+class ProdctItem(Resource):
+    @jwt_required()
+    def get(self, id):
+        # find by id
+        # data = Product.parser_id.parse_args()
+        product = ProductModel.find_by_id(id)
+        if product:
+            return product.json(), 200
+        return {"message": "Product Not Found"}, 404
+
 
 class Product(Resource):
     parser_product = reqparse.RequestParser(bundle_errors=True)
@@ -60,15 +70,6 @@ class Product(Resource):
     parser_id.add_argument("quantity", type=float, required=False, help="product quantity, error: {error_msg}")
     parser_id.add_argument("category", type=str, required=False, help="product category, error: {error_msg}")
     
-    @jwt_required()
-    def get(self):
-        # find by name
-        data = Product.parser_id.parse_args()
-
-        product = ProductModel.find_by_id(data.get("id", None))
-        if product:
-            return product.json(), 200
-        return {"message": "Product Not Found"}, 404
 
     @jwt_required()
     def post(self):

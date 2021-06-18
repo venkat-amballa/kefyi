@@ -9,6 +9,7 @@ class UserModel(db.Model):
     __tablename__ = "users"
 
     id = db.Column(db.Integer, primary_key=True)
+    username =  db.Column(db.String(80), nullable=False, unique=True)
     first_name = db.Column(db.String(80), nullable=False)
     last_name = db.Column(db.String(80))
     password = db.Column(db.String(80), nullable=False)
@@ -18,7 +19,8 @@ class UserModel(db.Model):
 
     stores = db.relationship('StoreModel', backref='user_owner')
 
-    def __init__(self, first_name, last_name, password, address, email, mobile):
+    def __init__(self, username, first_name, last_name, password, address, email, mobile):
+        self.username = username
         self.first_name = first_name
         self.last_name = last_name
         self.password = password
@@ -38,6 +40,8 @@ class UserModel(db.Model):
         return {
             "id": self.id,
             "first_name": self.first_name,
+            "last_name":self.last_name,
+            "username":self.username
             # "email":self.email,
             # "mobile":self.mobile
         }
@@ -55,3 +59,10 @@ class UserModel(db.Model):
         Find the given in the db
         """
         return cls.query.filter_by(first_name=first_name).first()
+
+    @classmethod
+    def find_by_username(cls, username):
+        """
+        Find the given in the db
+        """
+        return cls.query.filter_by(username=username).first()

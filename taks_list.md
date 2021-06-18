@@ -67,7 +67,7 @@ BUG FIXES
     - Giving details of the user in get method without proper authentication
 
 On 
-
+2. Consolidate the json responses in a single file from configs
 
 ## Hiccups:
 1. Not able to add same product across multiple stores in products table.

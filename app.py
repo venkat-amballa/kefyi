@@ -6,7 +6,7 @@ from flask_jwt_extended import JWTManager
 
 from resources.home import Home
 # from resources.product import Product, ProductList
-from resources.product import Product
+from resources.product import Product, ProdctItem
 
 from resources.user import UserRegister, UserLogin, User, TokenRefresh, UserLogout
 from resources.store import Store, StoreList
@@ -27,9 +27,9 @@ utils.load_config(app, env)
 api = Api(app)
 
 
-# @app.before_first_request
-# def create_tables():
-#     db.create_all()
+@app.before_first_request
+def create_tables():
+    db.create_all()
 
 jwt = JWTManager(app)
 
@@ -106,6 +106,7 @@ def revoked_token_callback():
 api.add_resource(Home, "/")
 
 # api.add_resource(ProductList, "/all_products")
+api.add_resource(ProdctItem, "/products/<int:id>")
 api.add_resource(Product, "/products")
 
 api.add_resource(Billing, "/billing")
@@ -114,7 +115,7 @@ api.add_resource(StoreList, "/stores")
 api.add_resource(Store, "/stores/<int:id>")
 
 api.add_resource(UserRegister, "/register")
-api.add_resource(User, "/user/<int:id>")
+api.add_resource(User, "/user")
 api.add_resource(UserLogin, "/login")
 api.add_resource(UserLogout, "/logout")
 
@@ -124,6 +125,8 @@ api.add_resource(TokenRefresh, "/refresh")
 if __name__ == "__main__":
     from db import db
     db.init_app(app)
-   
+    print("******************************")
+    print("Running as      :        ",os.environ.get('ENV'))
+    print("SQLALCHEMY_DATABASE_URI     :     ",app.config["SQLALCHEMY_DATABASE_URI"])
     app.run(port=5000)
 

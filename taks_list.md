@@ -69,6 +69,55 @@ BUG FIXES
 On 
 2. Consolidate the json responses in a single file from configs
 
+## #######
 ## Hiccups:
-1. Not able to add same product across multiple stores in products table.
-2. How to maintain logically different set of tables for different clients.
+## ########
+
+# PRODUCT
+- get /product/<id> - Add a measure to get only products from corresponding store
+- Not able to add same product across multiple stores in products table.
+ 
+/user
+-> get /user
+ - remove body, get user id from acces token
+ - RESPONSE format:
+-> {
+    "status": true,
+    "user": {
+        "id": 3,
+        "first_name": "naidu",
+        "last_name": "aa",
+        "username": "galli99",
+        "mobileno": ******345,
+        "email": "ke****fyi@gmail.com"
+    }
+}
+
+/stores
+
+->   GET stores/
+    RESPONSE:
+    {
+        "status":True/False,
+        "stores": []
+    }
+ 
+-> POST stores
+  REQUEST DATA:
+  name
+  state
+  district
+  street
+  pincode
+  phone no
+  email
+
+ -> 
+
+ /products
+
+
+ /transactions
+
+ - transaction_id
+ 

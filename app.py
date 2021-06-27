@@ -10,7 +10,7 @@ from resources.product import Product, ProdctItem
 
 from resources.user import UserRegister, UserLogin, User, TokenRefresh, UserLogout
 from resources.store import Store, StoreList
-
+from resources.customer import Customer
 from resources.billing import Billing
 
 from block_list import BLOCKLIST
@@ -31,9 +31,9 @@ utils.load_config(app, env)
 
 api = Api(app)
 
-# @app.before_first_request
-# def create_tables():
-#     db.create_all()
+@app.before_first_request
+def create_tables():
+    db.create_all()
 
 jwt = JWTManager(app)
 
@@ -118,10 +118,12 @@ api.add_resource(Billing, "/billing")
 api.add_resource(StoreList, "/stores")
 api.add_resource(Store, "/stores/<int:id>")
 
-api.add_resource(UserRegister, "/register")
+api.add_resource(Customer, "/customer/register")
+
+api.add_resource(UserRegister, "/user/register")
 api.add_resource(User, "/user")
-api.add_resource(UserLogin, "/login")
-api.add_resource(UserLogout, "/logout")
+api.add_resource(UserLogin, "/user/login")
+api.add_resource(UserLogout, "/user/logout")
 
 api.add_resource(TokenRefresh, "/refresh")
 

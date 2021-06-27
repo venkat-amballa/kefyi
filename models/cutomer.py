@@ -1,29 +1,30 @@
 from db import db
 
-
-class UserModel(db.Model):
+class CustomerModel(db.Model):
     """
-    User Model, this user has ownership of one/mutiple stores.
-    misc columns: stores []
+    Customer Model, This custmer buys products from a store
+    v1: Buys from a store, No password required as the store owner makes the bill,
+        for the customer.
+        - No username, password
+    v2: Buys online, The bill will be generated after successfull transaction. He has his own identity
+        i.e, they have their own username, password.
     """
-    __tablename__ = "users"
-
+    __tablename__ = "customers"
+    
     id = db.Column(db.Integer, primary_key=True)
-    username =  db.Column(db.String(80), nullable=False, unique=True)
+    # username =  db.Column(db.String(80)) # nullable=False, unique=True
     first_name = db.Column(db.String(80), nullable=False)
     last_name = db.Column(db.String(80))
-    password = db.Column(db.String(80), nullable=False)
+    # password = db.Column(db.String(80)) # nullable=False
     address = db.Column(db.String(200))
     email = db.Column(db.String(80))
     mobile = db.Column(db.String(20), nullable=False)
 
-    stores = db.relationship('StoreModel', backref='user_owner')
+    bills = db.relationship('CustomerBill', back_populates="customer")
 
-    def __init__(self, username, first_name, last_name, password, address, email, mobile):
-        self.username = username
+    def __init__(self, first_name, last_name, address, email, mobile):
         self.first_name = first_name
         self.last_name = last_name
-        self.password = password
         self.address = address
         self.email = email
         self.mobile = mobile
@@ -37,17 +38,12 @@ class UserModel(db.Model):
         db.session.commit()
 
     def json(self):
-        email = self.email.split('@')
-        mobile = self.mobile
-        mobile = "********"+mobile[-2:]
-        email = "******"+email[0][-2:]+"@"+email[1],
         return {
             "id": self.id,
             "first_name": self.first_name,
             "last_name":self.last_name,
-            "username":self.username,
-            "email":email,
-            "mobile":mobile
+            "email":self.email,
+            "mobile":self.mobile
         }
 
     @classmethod
@@ -65,8 +61,15 @@ class UserModel(db.Model):
         return cls.query.filter_by(first_name=first_name).first()
 
     @classmethod
-    def find_by_username(cls, username):
+    def find_by_mobile(cls, mobile):
         """
         Find the given in the db
         """
-        return cls.query.filter_by(username=username).first()
+        return cls.query.filter_by(mobile=mobile).first()   
+    
+    @classmethod
+    def find_by_email(cls, email):
+        """
+        Find the given in the db
+        """
+        return cls.query.filter_by(email=email).first()

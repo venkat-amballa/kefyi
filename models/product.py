@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from db import db
+from models.secondary_tables import products_bill
 
 class ProductModel(db.Model):
     """
@@ -18,8 +19,9 @@ class ProductModel(db.Model):
     actual_price = db.Column(db.Float(precision=2), nullable=False)
     wholesale_price = db.Column(db.Float(precision=2), nullable=False)
     retail_price = db.Column(db.Float(precision=2), nullable=False)
-    quantity = db.Column(db.Integer,nullable=False)
+    quantity = db.Column(db.Integer, nullable=False)
     
+    bills_in = db.relationship('CustomerBill', secondary=products_bill, back_populates="products")
     # brand_name = 
     # create_by = 
     # created_at = 

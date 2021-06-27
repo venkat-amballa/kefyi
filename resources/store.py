@@ -15,15 +15,14 @@ class StoreList(Resource):
     @jwt_required()
     def get(self):
         '''
-        REturns all the stores of a particular user
+        Returns all the stores of a particular user
         '''
         uid = get_jwt_identity()
         stores = StoreModel.find_by_user_id(uid)
         # print('stores:', StoreModel.query.all())
         if stores:
-            # print('stores -------------------:', stores[0].json())
-            return {"stores": [store.json() for store in stores]}, 200
-        return {"message": "No stores Found"}, 404
+            return {"status":True, "stores": [store.json() for store in stores]}, 200
+        return {"status":False, "stores": [], "message":"No stores available, kindly add one"}, 404
     
     @jwt_required()
     def post(self):
@@ -39,12 +38,16 @@ class StoreList(Resource):
         store = StoreModel(user_id=id, **data)
         if store.find_by_name(store.name):
             return {
+                "status":False,
                 "message": "A store exists with the name",
                 "error": "duplicate_record_insert"
                 }, 400
-
-        store.save_to_db()
-        return {"msg": store.json()}, 201
+        try:
+            store.save_to_db()
+        except Exception as e:
+            # TODO - LOGGER TO SAVE ERROR INFO  
+            return {"status":False, "message":"Exception while inserting data", "error":"DB_INSERTION_ERROR"}
+        return {"status":True, "stores": [store.json()]}, 201
 
 
 class Store(Resource):
@@ -57,11 +60,11 @@ class Store(Resource):
         store = StoreModel.find_by_id(id)
         if store:
             return store.productlist_json(), 200
-        return {"message": "Store Not Found"}, 404
+        return {"status":False, "message": "Store Not Found"}, 404
 
     
     def patch(self, id):
-        return {"msg": "patch method response"}
+        return {"message": "patch method response"}
     
     def delete(self, id):
         return {"message": "delete response"}

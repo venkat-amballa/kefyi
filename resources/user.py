@@ -15,7 +15,7 @@ from flask_jwt_extended import (
 )
 
 
-
+  
 class UserRegister(Resource):
     parser = reqparse.RequestParser(bundle_errors=True)
     parser.add_argument(
@@ -96,9 +96,9 @@ class User(Resource):
             }
             return response, 200
         return {"status":False, "message":"Invalid username/password"}, 404
-
-    @jwt_required(fresh=True)
+    
     @classmethod
+    @jwt_required(fresh=True)
     def delete(cls):
         id = get_jwt_identity()
         user = UserModel.find_by_id(id)

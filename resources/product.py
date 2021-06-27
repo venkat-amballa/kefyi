@@ -41,15 +41,55 @@ class ProductList(Resource):
             }, 200
 '''
 class ProdctItem(Resource):
+
     @jwt_required()
     def get(self, id):
         # find by id
-        # data = Product.parser_id.parse_args()
         product = ProductModel.find_by_id(id)
         if product:
             return product.json(), 200
         return {"message": "Product Not Found"}, 404
 
+    @jwt_required(fresh=True)
+    def put(self, id):
+        # JWT required
+        data = request.get_json()
+        print(data)
+        # NOTE-THIS
+        # data = request.json
+        product = ProductModel.find_by_id(id)
+        if product:
+            product.name = data.get("name", product.name)
+            product.actual_price = data.get("actual_price", product.actual_price)
+            product.wholesale_price = data.get("wholesale_price", product.wholesale_price)
+            product.retail_price = data.get("retail_price", product.retail_price)
+            product.quantity = data.get("quantity", product.quantity)
+            product.category = data.get("category", product.category)
+        else:
+            return {"status":False, "error_code":"PRODUCT_NOT_DOUND", "message":"No product with the given id, to update"}, 400
+        # TODO
+        # PUT method doesnot support any product creation, if there is no product with given id, returns an error.
+        # else:
+        #     product = ProductModel(name, **data)
+        try:
+            product.save_to_db()
+        except Exception as error:
+            error_dict = errors['DB']['DB_INSERTION_ERROR']
+            return error_dict['RESPONSE'],error_dict['STATUS_CODE'] 
+
+        return {"status":True, "message":"Product update successfull"}, 200
+
+    @jwt_required(fresh=True)
+    def delete(self, id):
+        claims = get_jwt()
+        if not claims["is_admin"]:
+            return {"message":"Required admin privilages!!"}, 401
+
+        product = ProductModel.find_by_id(id)
+        if product:
+            product.delete_from_db()
+            return {"Status": "Deleted Successfully"}, 200
+        return {"status": "Cant delete, Product not Found"}, 404
 
 class Product(Resource):
     parser_product = reqparse.RequestParser(bundle_errors=True)
@@ -61,14 +101,6 @@ class Product(Resource):
     parser_product.add_argument("category", type=str, required=True, help="Category name, error: {error_msg}")
     parser_product.add_argument("store_id",  type=int, required=False, help="Store id: error: {error_msg}")
 
-    parser_id = reqparse.RequestParser(bundle_errors=True)
-    parser_id.add_argument("id", type=int, required=True, help="product id, error: {error_msg}")
-    # parser_id.add_argument("name", type=str, required=False, help="product name, error: {error_msg}")
-    parser_product.add_argument("actual_price", type=float, required=True, help="Invalid Actual AMount, error: {error_msg}")
-    parser_id.add_argument("wholesale_price", type=float, required=False, help="wholesale price, error: {error_msg}")
-    parser_id.add_argument("retail_price", type=float, required=False, help="retail price, error: {error_msg}")
-    parser_id.add_argument("quantity", type=float, required=False, help="product quantity, error: {error_msg}")
-    parser_id.add_argument("category", type=str, required=False, help="product category, error: {error_msg}")
     
 
     @jwt_required()
@@ -109,41 +141,3 @@ class Product(Resource):
 
         return {"status":True, "message":"Insertion of the product is successfull"}, 201
 
-    @jwt_required(fresh=True)
-    def put(self):
-        # JWT required
-        data = Product.parser_id.parse_args()
-        # NOTE-THIS
-        # data = request.json
-        product = ProductModel.find_by_id(data["id"])
-
-        if product:
-            product.wholesale_price = data.get("wholesale_price", product.wholesale_price)
-            product.retail_price = data.get("retail_price", product.retail_price)
-            product.quantity = data.get("quantity", product.quantity)
-            product.category = data.get("category", product.category)
-        else:
-            return {"status":False, "error_code":"PRODUCT_NOT_DOUND", "message":"No product with the given id, to update"}, 400
-        # TODO
-        # PUT method doesnot support any product creation, if there is no product with given id, returns an error.
-        # else:
-        #     product = ProductModel(name, **data)
-        try:
-            product.save_to_db()
-        except Exception as error:
-            error_dict = errors['DB']['DB_INSERTION_ERROR']
-            return error_dict['RESPONSE'],error_dict['STATUS_CODE'] 
-
-        return {"status":True, "message":"Product update successfull"}, 200
-
-    @jwt_required(fresh=True)
-    def delete(self, name):
-        claims = get_jwt()
-        if not claims["is_admin"]:
-            return {"message":"Required admin privilages!!"}, 401
-
-        product = ProductModel.find_by_name(name)
-        if product:
-            product.delete_from_db()
-            return {"Status": "Deleted Successfully"}, 200
-        return {"status": "Cant delete, Product not Found"}, 404

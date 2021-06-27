@@ -14,8 +14,9 @@ class ProductModel(db.Model):
     name = db.Column(db.String(80))
     # description = db.Column(db.String(500))
     category = db.Column(db.String(40), nullable=False)
-    created_on = db.Column(db.DateTime, server_default=db.func.now())
-    updated_on = db.Column(db.DateTime, server_default=db.func.now(), server_onupdate=db.func.now())
+    # these created on and updated_on are causing error in heroku, posstgresql
+    # created_on = db.Column(db.DateTime, server_default=db.func.now())
+    # updated_on = db.Column(db.DateTime, server_default=db.func.now(), server_onupdate=db.func.now())
     # column names, i.e, actual_price, wholesale_price, retail_price if changed. Update them in constants.py
     actual_price = db.Column(db.Float(precision=3), nullable=False)
     wholesale_price = db.Column(db.Float(precision=3), nullable=False)

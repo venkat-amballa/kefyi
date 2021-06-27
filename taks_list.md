@@ -66,9 +66,6 @@ BUG FIXES
     - Deleting the user without proper confirmation
     - Giving details of the user in get method without proper authentication
 
-On 
-2. Consolidate the json responses in a single file from configs
-
 ## #######
 ## Hiccups:
 ## ########
@@ -76,32 +73,26 @@ On
 # PRODUCT
 - get /product/<id> - Add a measure to get only products from corresponding store
 - Not able to add same product across multiple stores in products table.
- 
-/user
--> get /user
- - remove body, get user id from acces token
- - RESPONSE format:
--> {
-    "status": true,
-    "user": {
-        "id": 3,
-        "first_name": "naidu",
-        "last_name": "aa",
-        "username": "galli99",
-        "mobileno": ******345,
-        "email": "ke****fyi@gmail.com"
-    }
-}
+- updated_on time is not getting updated whenever a product data is updated
+
+# Billing
+- while changing status of the bill, add athorisation so that one cannot change other bill id.
+- when ever we are updating a product data, the product info in all the orders before
+     this change, is also getting  changed. 
+    Solution:
+    -- If no extra data is to be saved in the association table, use db.Table else model
+    [link] https://stackoverflow.com/questions/56388707/sqlalchemy-many-to-many-relationship-updating-association-object-with-extra-colu    
+- did not handle custom prices while calculating bill and adding the price to Association table created above.
+
+# stores
+- anyone can request content of a particular store. Add authorisation check while requesting store data. i.e, only allow the actual user(owner) to access the stores
+- one cant add same product in other store
+
+# Commom to both products and stores
+- return store products when hitting products api (optional)
 
 /stores
 
-->   GET stores/
-    RESPONSE:
-    {
-        "status":True/False,
-        "stores": []
-    }
- 
 -> POST stores
   REQUEST DATA:
   name
@@ -111,13 +102,3 @@ On
   pincode
   phone no
   email
-
- -> 
-
- /products
-
-
- /transactions
-
- - transaction_id
- 

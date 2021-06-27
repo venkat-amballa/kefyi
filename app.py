@@ -31,9 +31,9 @@ utils.load_config(app, env)
 
 api = Api(app)
 
-@app.before_first_request
-def create_tables():
-    db.create_all()
+# @app.before_first_request
+# def create_tables():
+#     db.create_all()
 
 jwt = JWTManager(app)
 
@@ -131,8 +131,5 @@ api.add_resource(TokenRefresh, "/refresh")
 if __name__ == "__main__":
     from db import db
     db.init_app(app)
-    print("******************************")
-    print("Running as      :        ",os.environ.get('ENV'))
-    print("SQLALCHEMY_DATABASE_URI     :     ",app.config["SQLALCHEMY_DATABASE_URI"])
     app.run(port=5000)
 

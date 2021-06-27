@@ -1,5 +1,3 @@
-from datetime import datetime
-
 from db import db
 from models.secondary_tables import products_bill
 
@@ -11,14 +9,17 @@ class ProductModel(db.Model):
     """
 
     __tablename__ = "products"
-
+    
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80))
     # description = db.Column(db.String(500))
     category = db.Column(db.String(40), nullable=False)
-    actual_price = db.Column(db.Float(precision=2), nullable=False)
-    wholesale_price = db.Column(db.Float(precision=2), nullable=False)
-    retail_price = db.Column(db.Float(precision=2), nullable=False)
+    created_on = db.Column(db.DateTime, server_default=db.func.now())
+    updated_on = db.Column(db.DateTime, server_default=db.func.now(), server_onupdate=db.func.now())
+    # column names, i.e, actual_price, wholesale_price, retail_price if changed. Update them in constants.py
+    actual_price = db.Column(db.Float(precision=3), nullable=False)
+    wholesale_price = db.Column(db.Float(precision=3), nullable=False)
+    retail_price = db.Column(db.Float(precision=3), nullable=False)
     quantity = db.Column(db.Integer, nullable=False)
     
     bills_in = db.relationship('CustomerBill', secondary=products_bill, back_populates="products")
@@ -56,7 +57,7 @@ class ProductModel(db.Model):
             "actual_price": self.actual_price,
             "wholesale_price": self.wholesale_price,
             "retail_price": self.retail_price,
-            "quantity": self.quantity,
+            "quantity": self.quantity
         }
 
     @classmethod

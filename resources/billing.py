@@ -1,7 +1,7 @@
 from flask_restful import Resource, reqparse
 from flask import request
 
-from models.billing import CustomerBill
+from models.billing import CustomerBillModel
 from models.product import ProductModel
 
 from configs.errors import errors

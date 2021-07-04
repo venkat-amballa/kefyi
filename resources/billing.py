@@ -58,7 +58,7 @@ class Billing(Resource):
                 
                 # add an entry in bill
                 bill_amount = BillingHelper.calculate_bill(products, sale_type)
-                bill = CustomerBill(customer_id=customer_id, store_id=store_id, \
+                bill = CustomerBillModel(customer_id=customer_id, store_id=store_id, \
                                     sale_type=sale_type, status=STATUS['PENDING'], \
                                     amount = bill_amount)
 
@@ -90,7 +90,7 @@ class Billing(Resource):
         bill_id = data.get('bill_id', None)
         bill_status = data.get('status', None)
         # bill of the current customer
-        customer_bill = CustomerBill.find_by_id(bill_id)
+        customer_bill = CustomerBillModel.find_by_id(bill_id)
         return_status = False
         message = "Unable to update status of bill"
 
@@ -190,5 +190,5 @@ class BillingHelper:
     
     def update_items_with_bill(bill_id):
         # get all products and their quantities 
-        customer_bill = CustomerBill.find_by_id(bill_id)
+        customer_bill = CustomerBillModel.find_by_id(bill_id)
         return {"data":[prod.json() for prod in customer_bill.products]}

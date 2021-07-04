@@ -3,7 +3,7 @@ from db import db
 
 from models.secondary_tables import products_bill
 
-class CustomerBill(db.Model):
+class CustomerBillModel(db.Model):
     
     __tablename__ = "customerbills"
 

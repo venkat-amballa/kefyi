@@ -23,7 +23,7 @@ class ProductModel(db.Model):
     retail_price = db.Column(db.Float(precision=3), nullable=False)
     quantity = db.Column(db.Integer, nullable=False)
     
-    bills_in = db.relationship('CustomerBill', secondary=products_bill, back_populates="products")
+    bills_in = db.relationship('CustomerBillModel', secondary=products_bill, back_populates="products")
     # brand_name = 
     # create_by = 
     # created_at = 

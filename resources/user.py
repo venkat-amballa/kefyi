@@ -118,7 +118,7 @@ class UserLogin(Resource):
     get - login/
     '''
     @classmethod
-    def get(cls):
+    def post(cls):
         login_status = False
         data = _user_parser.parse_args()
         user = UserModel.find_by_username(data.get("username", None))

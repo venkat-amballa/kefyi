@@ -11,7 +11,7 @@ class StoreModel(db.Model):
     address = db.Column(db.String(150))
     contact = db.Column(db.String(50))
     # user_id is the owner id of the store
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id')) # foreign key
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False) # foreign key
     products = db.relationship('ProductModel', secondary=store_product, backref = db.backref('store',  lazy=True))
     
     bills = db.relationship('CustomerBillModel', back_populates="store")

@@ -22,7 +22,7 @@ class StoreList(Resource):
         # print('stores:', StoreModel.query.all())
         if stores:
             return {"status":True, "stores": [store.json() for store in stores]}, 200
-        return {"status":False, "stores": [], "message":"No stores available, kindly add one"}, 404
+        return {"status":True, "stores": [], "message":"No stores available, kindly add one"}, 404
     
     @jwt_required()
     def post(self):

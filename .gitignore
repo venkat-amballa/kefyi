@@ -1,5 +1,6 @@
 __pycache__/
 *.pyc
+.idea/
 decorators.py
 log.txt
 db_relations/

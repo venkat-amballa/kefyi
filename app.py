@@ -13,6 +13,8 @@ from resources.store import Store, StoreList
 from resources.customer import Customer
 from resources.billing import Billing
 
+from resources.store_product import StoreProduct, StoreProducts
+
 from block_list import BLOCKLIST
 
 import utils
@@ -45,8 +47,9 @@ def add_claims_to_jwt(identity):
 
 @jwt.token_in_blocklist_loader
 def token_revoked_callback(jwt_header, jwt_payload):
-    # print(jwt_header, jwt_payload)
-    return False
+    jti = jwt_payload["jti"]
+    return jti in BLOCKLIST
+
 
 '''
 Callbacks to override default responses in callbacks
@@ -73,6 +76,7 @@ Callbacks to override default responses in callbacks
 @jwt.expired_token_loader
 def expired_token_callback(jwt_header, jwt_payload):
     return {
+        "status": False,
         "message": "The token has expired", 
         "error_code": "token_expired"
     }, 401
@@ -80,6 +84,7 @@ def expired_token_callback(jwt_header, jwt_payload):
 @jwt.invalid_token_loader
 def invalid_token_callback(error):
     return {
+        "status": False,
         "message": "Invalid token", 
         "error_code": "invalid_token", 
         "error":error
@@ -101,7 +106,7 @@ def needs_fresh_token_callback(jwt_header, jwt_payload):
     }, 401
 
 @jwt.revoked_token_loader
-def revoked_token_callback():
+def revoked_token_callback(jwt_header, jwt_payload):
     return {
         "message": "Token is revoked, login again", 
         "error": "revoked_token"
@@ -127,6 +132,8 @@ api.add_resource(UserLogout, "/user/logout")
 
 api.add_resource(TokenRefresh, "/refresh")
 
+api.add_resource(StoreProduct, "/store/<int:s_id>/product/<int:p_id>")
+api.add_resource(StoreProducts, "/store/<int:s_id>/products")
 
 if __name__ == "__main__":
     from db import db

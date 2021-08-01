@@ -33,7 +33,6 @@ class StoreList(Resource):
         # TODO:
         #  1. check whether this user has necessary access to change something in the store.
 
-        print("jwt identity:", id)
         data = _store_parser.parse_args()
         store = StoreModel(user_id=id, **data)
         if store.find_by_name(store.name):
@@ -63,8 +62,8 @@ class Store(Resource):
         return {"status":False, "message": "Store Not Found"}, 404
 
     
-    def patch(self, id):
-        return {"message": "patch method response"}
+    def put(self, id):
+        return {"status":False, "message": "not implemented, put"}
     
     def delete(self, id):
-        return {"message": "delete response"}
+        return {"status":False, "message": "not implemented, delete"}

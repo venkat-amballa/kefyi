@@ -1,10 +1,11 @@
 from werkzeug.security import safe_str_cmp
-
 from flask_restful import Resource, reqparse
 from models.user import UserModel
 
 from configs.errors import errors
+from configs.constants import TOKEN_EXPIRES
 
+from block_list import BLOCKLIST
 
 from flask_jwt_extended import (
     create_access_token, 
@@ -125,9 +126,9 @@ class UserLogin(Resource):
         print("user login request received")
         if user and safe_str_cmp(user.password, data.get("password", None)):
             login_status=True
-            jwt_token = create_access_token(identity=user.id, fresh=True)
+            jwt_token = create_access_token(identity=user.id, fresh=True, expires_delta=TOKEN_EXPIRES)
             refresh_token = create_refresh_token(user.id)
-            return {"access_token": jwt_token, "refresh_token": refresh_token}, 200
+            return {"status":login_status, "access_token": jwt_token, "refresh_token": refresh_token}, 200
 
         return {"status":login_status, "message": "Invalid Credentials"}, 401
 
@@ -144,10 +145,7 @@ class TokenRefresh(Resource):
 class UserLogout(Resource):
     @jwt_required()
     def post(self):
-        # jri = get_jwt()
-        # try:
-        #     raise Exception("")
-        # except Exception as e:
-        #     print("Not Implemented The EndPoint")
-        return {"error":"not_implemented","message":"Not Implemented The EndPoint"}, 200
+        jti = get_jwt()["jti"]
+        BLOCKLIST.add(jti)
+        return {"status": True, "jti":jti, "message":"User Logout Successfull..!"}, 200
     

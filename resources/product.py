@@ -94,7 +94,7 @@ class ProdctItem(Resource):
 class Product(Resource):
     parser_product = reqparse.RequestParser(bundle_errors=True)
     parser_product.add_argument("name", type=str, required=True, help="Product name, error: {error_msg}")
-    parser_product.add_argument("actual_price", type=float, required=True, help="Invalid Actual AMount, error: {error_msg}")
+    parser_product.add_argument("actual_price", type=float, required=True, help="Invalid Actual Amount, error: {error_msg}")
     parser_product.add_argument("wholesale_price", type=float, required=True, help="Invalid Wholsesale Amount, error: {error_msg}")
     parser_product.add_argument("retail_price", type=float, required=True, help="Invalid Retail Amount, error: {error_msg}")
     parser_product.add_argument("quantity", type=int, required=True, help="Invalid Quantity: error: {error_msg}")
@@ -111,7 +111,8 @@ class Product(Resource):
         # JWT required
         # TODO:
         # Find wherther the user has access to this store, only allow if he does.
-        data = Product.parser_product.parse_args()
+        data = request.get_json()
+        # data = Product.parser_product.parse_args()
         name = data.get("name", None)
         if name is None:
             return {"status":False, "error_code":"PRODUCT_NAME_REQUIRED","message": "Product name is required"}, 400
@@ -122,10 +123,8 @@ class Product(Resource):
         # check the user access to the store.
         
         if ProductModel.find_by_name(name):
-            return {"status":False, "error_code":"PRODUCT_NAME_INVALID","message": "There exists an Product with the same name"}, 400
+            return {"status":False, "error_code":"PRODUCT_NAME_DUPLICATE","message": "There exists an Product with the same name"}, 400
         
-        # deleting the store_id before passing it to ProductModel
-        del data["store_id"]
         product = ProductModel(**data)
         # saving only in store.products is enough and product.save_to_db() isn't needed.
         store.products.append(product)

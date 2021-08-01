@@ -102,3 +102,6 @@ BUG FIXES
   pincode
   phone no
   email
+
+
+api.add_resource(Test, "/stores/<int:s_id>/product/<int:p_id")

@@ -62,11 +62,11 @@ class ProductModel(db.Model):
         }
 
     @classmethod
-    def find_all(cls):
+    def find_all(cls, _sid):
         """
         Find the given in the db
         """
-        return cls.query.all()
+        return ProductModel.query.filter(ProductModel.store.any(id=_sid)).all()
 
     @classmethod
     def find_similar(cls, name):
@@ -82,9 +82,17 @@ class ProductModel(db.Model):
     @classmethod
     def find_by_id(cls, _id):
         """
-        Find the given in the db
+        Find the given product id, in the db
         """
         return cls.query.filter_by(id=_id).first()
+
+    @classmethod
+    def find_in_store(cls, _sid, _pid):
+        """
+        Find the given in the db
+        """
+        return cls.query.filter(cls.store.any(id=_sid)) \
+                        .filter(cls.id == _pid).first()
 
     @classmethod
     def find_by_name(cls, name):

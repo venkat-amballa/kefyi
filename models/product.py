@@ -17,7 +17,7 @@ class ProductModel(db.Model):
     # these created on and updated_on are causing error in heroku, posstgresql
     # created_on = db.Column(db.DateTime, server_default=db.func.now())
     # updated_on = db.Column(db.DateTime, server_default=db.func.now(), server_onupdate=db.func.now())
-    # column names, i.e, actual_price, wholesale_price, retail_price if changed. Update them in constants.py
+    # column names, i.e, actual_price, wholesale_price, retail_price if changed. Update them in configs.constants
     actual_price = db.Column(db.Float(precision=3), nullable=False)
     wholesale_price = db.Column(db.Float(precision=3), nullable=False)
     retail_price = db.Column(db.Float(precision=3), nullable=False)
@@ -77,7 +77,7 @@ class ProductModel(db.Model):
         #     firstname.like(search_var1),
         #     lastname.like(search_var2)
         #     )
-        return cls.query.filter(cls.name.like("%" + name + "%"))
+        return cls.query.filter(cls.name.like("%" + name + "%")).all()
 
     @classmethod
     def find_by_id(cls, _id):

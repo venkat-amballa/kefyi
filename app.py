@@ -7,7 +7,7 @@ from flask_jwt_extended import JWTManager
 from resources.home import Home
 # from resources.product import Product, ProductList
 from resources.product import Product, ProdctItem
-
+from resources.categories import Categories
 from resources.user import UserRegister, UserLogin, User, TokenRefresh, UserLogout
 from resources.store import Store, StoreList
 from resources.customer import Customer
@@ -33,11 +33,13 @@ utils.load_config(app, env)
 
 api = Api(app)
 
-# @app.before_first_request
-# def create_tables():
-#     db.create_all()
-
 jwt = JWTManager(app)
+if env=='DEV':
+    @app.before_first_request
+    def create_tables():
+        db.create_all()
+
+
 
 @jwt.additional_claims_loader
 def add_claims_to_jwt(identity):
@@ -117,7 +119,7 @@ api.add_resource(Home, "/")
 # api.add_resource(ProductList, "/all_products")
 api.add_resource(ProdctItem, "/products/<int:id>")
 api.add_resource(Product, "/products")
-
+api.add_resource(Categories, "/categories")
 api.add_resource(Billing, "/billing")
 
 api.add_resource(StoreList, "/stores")

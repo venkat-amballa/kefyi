@@ -5,14 +5,11 @@ from models.billing import CustomerBillModel
 from models.product import ProductModel
 
 from configs.errors import errors
-from constants import STATUS, SALE_TYPES
+from configs.constants import STATUS, SALE_TYPES
 
 DB_INSERT_ERROR = errors["DB"]["DB_INSERTION_ERROR"]
 
 class Billing(Resource):
-    '''
-    
-    '''
     parser = reqparse.RequestParser(bundle_errors=True)
     parser.add_argument("customer_id", type=int, required=True, help="Customer id is required")
     parser.add_argument("store_id", type=int, required=True, help="store id is required")

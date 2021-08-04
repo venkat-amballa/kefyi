@@ -1,5 +1,5 @@
 from db import db
-from models.secondary_tables import products_bill
+# from models.secondary_tables import products_bill
 
 class ProductModel(db.Model):
     """
@@ -25,7 +25,7 @@ class ProductModel(db.Model):
     retail_price = db.Column(db.Float(precision=3), nullable=False)
     quantity = db.Column(db.Integer, nullable=False)
     
-    bills_in = db.relationship('CustomerBillModel', secondary=products_bill, back_populates="products")
+    # bills_in = db.relationship('CustomerOrderModel', secondary=products_bill, back_populates="products")
     # brand_name = 
     # create_by = 
     # created_at = 
@@ -43,8 +43,9 @@ class ProductModel(db.Model):
     # price = db.Column(db.Float(precision=2))
     # price = db.Column(db.Float(precision=2))
 
-    def __init__(self, name, category, description, unit, actual_price, wholesale_price, retail_price, quantity):
+    def __init__(self, name, url, category, description, unit, actual_price, wholesale_price, retail_price, quantity):
         self.name = name
+        self.url = url
         self.category = category
         self.description = description
         self.unit = unit
@@ -57,6 +58,7 @@ class ProductModel(db.Model):
         return {
             "id": self.id,
             "name": self.name,
+            "url":self.url,
             "category": self.category,
             "description": self.description,
             "unit": self.unit,

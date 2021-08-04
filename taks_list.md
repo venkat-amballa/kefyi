@@ -75,7 +75,7 @@ BUG FIXES
 - Not able to add same product across multiple stores in products table.
 - updated_on time is not getting updated whenever a product data is updated
 
-# Billing
+# Order
 - while changing status of the bill, add athorisation so that one cannot change other bill id.
 - when ever we are updating a product data, the product info in all the orders before
      this change, is also getting  changed. 

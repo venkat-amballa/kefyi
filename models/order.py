@@ -1,11 +1,11 @@
 from datetime import datetime
 from db import db
 
-from models.secondary_tables import products_bill
+from models.secondary_tables import ProductOrders
 
-class CustomerBillModel(db.Model):
+class CustomerOrderModel(db.Model):
     
-    __tablename__ = "customerbills"
+    __tablename__ = "orders"
 
     '''
     Operations that billing db should support
@@ -24,10 +24,10 @@ class CustomerBillModel(db.Model):
     # wholesale, retail, custom
     sale_type = db.Column(db.String(20), nullable=False)
     # product(child)
-    products = db.relationship('ProductModel', secondary=products_bill, back_populates="bills_in")
-    
-    sale_type = db.Column(db.String(20), nullable=False)
-    status = db.Column(db.String(20), nullable=False)
+    # products = db.relationship('ProductModel', secondary=products_bill, back_populates="bills_in")
+    products = db.relationship('ProductOrders') # association table `ProductOrders` is referenced here instead of `ProductModel`
+
+    status = db.Column(db.String(1), nullable=False)
     # isdebt = True # if payment type is paylater.
     # isactive = True # if the payment is pending.
     # status = ["success", "failure", "pending"]
@@ -50,17 +50,13 @@ class CustomerBillModel(db.Model):
             "sale_type":self.sale_type,
             "status":self.status,
             "amount":self.amount,
-            "products":[prod.json() for prod in self.products]
+            # "products":[prod.json() for prod in self.products]
+            "products": [prod_order.product.json() for prod_order in self.products]
         }
 
     @classmethod
     def find_by_id(cls, id):
         return cls.query.filter_by(id=id).first()
 
-    @classmethod
-    def find_by_category(cls, name):
-        """
-        Find the given in the db
-        """
-        return cls.query.filter_by(category=name).first()
+
 

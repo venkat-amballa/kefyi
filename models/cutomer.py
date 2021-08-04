@@ -20,7 +20,7 @@ class CustomerModel(db.Model):
     email = db.Column(db.String(80))
     mobile = db.Column(db.String(20), nullable=False)
 
-    bills = db.relationship('CustomerBillModel', back_populates="customer")
+    bills = db.relationship('CustomerOrderModel', back_populates="customer")
 
     def __init__(self, first_name, last_name, address, email, mobile):
         self.first_name = first_name

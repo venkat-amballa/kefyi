@@ -12,8 +12,10 @@ class ProductModel(db.Model):
     
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80))
-    # description = db.Column(db.String(500))
+    url = db.Column(db.String(300))
+    description = db.Column(db.String(500))
     category = db.Column(db.String(40), nullable=False)
+    unit = db.Column(db.String(20), nullable=False)
     # these created on and updated_on are causing error in heroku, posstgresql
     # created_on = db.Column(db.DateTime, server_default=db.func.now())
     # updated_on = db.Column(db.DateTime, server_default=db.func.now(), server_onupdate=db.func.now())
@@ -38,13 +40,14 @@ class ProductModel(db.Model):
     # Ashirvadh_Aata_100g
     # brand
     # category (Food, Snacks, Diary, Electronics, Clothing, .... etc)
-    # description
     # price = db.Column(db.Float(precision=2))
     # price = db.Column(db.Float(precision=2))
 
-    def __init__(self, name, category, actual_price, wholesale_price, retail_price, quantity):
+    def __init__(self, name, category, description, unit, actual_price, wholesale_price, retail_price, quantity):
         self.name = name
         self.category = category
+        self.description = description
+        self.unit = unit
         self.actual_price = actual_price
         self.wholesale_price = wholesale_price
         self.retail_price = retail_price
@@ -54,7 +57,9 @@ class ProductModel(db.Model):
         return {
             "id": self.id,
             "name": self.name,
-            "category":self.category,
+            "category": self.category,
+            "description": self.description,
+            "unit": self.unit,
             "actual_price": self.actual_price,
             "wholesale_price": self.wholesale_price,
             "retail_price": self.retail_price,

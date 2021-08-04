@@ -54,7 +54,6 @@ class ProdctItem(Resource):
     def put(self, id):
         # JWT required
         data = request.get_json()
-        print(data)
         # NOTE-THIS
         # data = request.json
         product = ProductModel.find_by_id(id)
@@ -65,6 +64,8 @@ class ProdctItem(Resource):
             product.retail_price = data.get("retail_price", product.retail_price)
             product.quantity = data.get("quantity", product.quantity)
             product.category = data.get("category", product.category)
+            product.description = data.get("description", product.description)
+            product.unit = data.get("unit", product.unit)
         else:
             return {"status":False, "error_code":"PRODUCT_NOT_DOUND", "message":"No product with the given id, to update"}, 400
         # TODO

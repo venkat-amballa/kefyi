@@ -68,6 +68,15 @@ class ProductModel(db.Model):
             "quantity": self.quantity
         }
 
+    def order_json(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "url": self.url,
+            "category": self.category,
+            "unit": self.unit,
+        }
+
     @classmethod
     def find_all(cls, _sid):
         """

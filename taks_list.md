@@ -1,6 +1,6 @@
 ## Update the PUT method of PRODUCT Resource to handle individual or all or certain combination of values for getting updated.
 
-# SEARCH USING `NOTE-THIS` or TODO to see all the places i have a doubt
+# SEARCH USING `NOTE-THIS` or `TODO` to see all the places i have a doubt
 
 1. convert the current product to master_product
 2. create a partner, and a store for him.

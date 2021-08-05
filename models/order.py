@@ -50,8 +50,8 @@ class CustomerOrderModel(db.Model):
             "sale_type":self.sale_type,
             "status":self.status,
             "amount":self.amount,
-            # "products":[prod.json() for prod in self.products]
-            "products": [prod_order.product.json() for prod_order in self.products]
+            # "products": [prod_order.product.json() for prod_order in self.products]
+            "products": [prod_order.json() for prod_order in self.products]
         }
 
     @classmethod

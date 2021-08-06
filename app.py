@@ -3,6 +3,9 @@ import os
 from flask import Flask, jsonify
 from flask_restful import Api
 from flask_jwt_extended import JWTManager
+from flask_migrate import Migrate
+
+from db import db
 
 from resources.home import Home
 # from resources.product import Product, ProductList
@@ -34,6 +37,10 @@ utils.load_config(app, env)
 api = Api(app)
 
 jwt = JWTManager(app)
+# Database Migrations
+db.init_app(app)
+migrate = Migrate(app, db)
+
 if env=='DEV':
     @app.before_first_request
     def create_tables():
@@ -140,7 +147,6 @@ api.add_resource(StoreProduct, "/store/<int:s_id>/product/<int:p_id>")
 api.add_resource(StoreProducts, "/store/<int:s_id>/products")
 
 if __name__ == "__main__":
-    from db import db
-    db.init_app(app)
+    # db.init_app(app)
     app.run(port=5000)
 

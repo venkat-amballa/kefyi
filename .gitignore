@@ -7,3 +7,5 @@ db_relations/
 flask_sqlalchemy_basics/
 data.db
 data/
+misc/op/
+misc/op_refactored/

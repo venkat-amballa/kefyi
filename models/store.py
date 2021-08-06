@@ -14,7 +14,7 @@ class StoreModel(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False) # foreign key
     products = db.relationship('ProductModel', secondary=store_product, backref=db.backref('store',  lazy=True))
     
-    bills = db.relationship('CustomerOrderModel', back_populates="store")
+    orders = db.relationship('CustomerOrderModel', back_populates="store")
     # type = grocery, medical, clothes, electronic etc
     # id
     # name

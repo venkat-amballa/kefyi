@@ -2,6 +2,7 @@ from configs import config
 
 ENVS = ["DEV", "STAGE", "PROD"]
 
+
 def load_config(app, env):
     if env not in ENVS:
         raise EnvironmentError(f"No such environment found, possible values are {ENVS}")
@@ -13,4 +14,3 @@ def load_config(app, env):
         env_config = config.ProdConfig
 
     app.config.from_object(env_config)
-    

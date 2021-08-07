@@ -1,5 +1,6 @@
 from db import db
 
+
 class CustomerModel(db.Model):
     """
     Customer Model, This custmer buys products from a store
@@ -9,8 +10,9 @@ class CustomerModel(db.Model):
     v2: Buys online, The bill will be generated after successfull transaction. He has his own identity
         i.e, they have their own username, password.
     """
+
     __tablename__ = "customers"
-    
+
     id = db.Column(db.Integer, primary_key=True)
     # username =  db.Column(db.String(80)) # nullable=False, unique=True
     first_name = db.Column(db.String(80), nullable=False)
@@ -20,7 +22,7 @@ class CustomerModel(db.Model):
     email = db.Column(db.String(80))
     mobile = db.Column(db.String(20), nullable=False)
 
-    bills = db.relationship('CustomerOrderModel', back_populates="customer")
+    bills = db.relationship("CustomerOrderModel", back_populates="customer")
 
     def __init__(self, first_name, last_name, address, email, mobile):
         self.first_name = first_name
@@ -41,10 +43,14 @@ class CustomerModel(db.Model):
         return {
             "id": self.id,
             "first_name": self.first_name,
-            "last_name":self.last_name,
-            "email":self.email,
-            "mobile":self.mobile
+            "last_name": self.last_name,
+            "email": self.email,
+            "mobile": self.mobile,
         }
+
+    @classmethod
+    def orders(cls, _cid):
+        return cls.query.filter_by(id=_cid).scalar()
 
     @classmethod
     def find_by_id(cls, _id):
@@ -65,8 +71,8 @@ class CustomerModel(db.Model):
         """
         Find the given in the db
         """
-        return cls.query.filter_by(mobile=mobile).first()   
-    
+        return cls.query.filter_by(mobile=mobile).first()
+
     @classmethod
     def find_by_email(cls, email):
         """

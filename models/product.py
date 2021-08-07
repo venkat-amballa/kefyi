@@ -1,5 +1,7 @@
 from db import db
+
 # from models.secondary_tables import products_bill
+
 
 class ProductModel(db.Model):
     """
@@ -9,9 +11,9 @@ class ProductModel(db.Model):
     """
 
     __tablename__ = "products"
-    
+
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(80))
+    name = db.Column(db.String(80), nullable=False)
     url = db.Column(db.String(300))
     description = db.Column(db.String(500))
     category = db.Column(db.String(40), nullable=False)
@@ -24,17 +26,18 @@ class ProductModel(db.Model):
     wholesale_price = db.Column(db.Float(precision=3), nullable=False)
     retail_price = db.Column(db.Float(precision=3), nullable=False)
     quantity = db.Column(db.Integer, nullable=False)
-    
+    # store -> reference from StoreModel
+
     # bills_in = db.relationship('CustomerOrderModel', secondary=products_bill, back_populates="products")
-    # brand_name = 
-    # create_by = 
-    # created_at = 
-    # updated_by = 
-    # updated_at = 
-    # public = 
+    # brand_name =
+    # create_by =
+    # created_at =
+    # updated_by =
+    # updated_at =
+    # public =
     # manufactured_on = db.dColumn(db.DateTime, nullable=False)
     # expiries_on = db.Column(db.DateTime, nullable=False)
-    # imported_on 
+    # imported_on
 
     # store_id = db.Column(db.Integer, db.ForeignKey("stores.id"))
     # Ashirvadh_Aata_100g
@@ -58,14 +61,14 @@ class ProductModel(db.Model):
         return {
             "id": self.id,
             "name": self.name,
-            "url":self.url,
+            "url": self.url,
             "category": self.category,
             "description": self.description,
             "unit": self.unit,
             "actual_price": self.actual_price,
             "wholesale_price": self.wholesale_price,
             "retail_price": self.retail_price,
-            "quantity": self.quantity
+            "quantity": self.quantity,
         }
 
     def order_json(self):
@@ -78,14 +81,21 @@ class ProductModel(db.Model):
         }
 
     @classmethod
-    def find_all(cls, _sid):
+    def _base_query(cls, _uid, _sid):
         """
-        Find the given in the db
+        Base query for Product Model class, to make sure we search in only in user allowed stores.
         """
-        return ProductModel.query.filter(ProductModel.store.any(id=_sid)).all()
+        return cls.query.filter(cls.store.any(user_id=_uid, id=_sid))
 
     @classmethod
-    def find_similar(cls, name):
+    def find_all(cls, _uid, _sid):
+        """
+        Find the given products of a store, in the db
+        """
+        return cls._base_query(_uid, _sid).all()
+
+    @classmethod
+    def find_similar(cls, _uid, _sid, name):
         """
         Find the given in the db
         """
@@ -93,29 +103,31 @@ class ProductModel(db.Model):
         #     firstname.like(search_var1),
         #     lastname.like(search_var2)
         #     )
-        return cls.query.filter(cls.name.like("%" + name + "%")).all()
+        # cls.query.filter(cls.name.like("%" + name + "%")).all()
+        # TODO - one can use contains
+        return cls._base_query(_uid, _sid).filter_by(cls.name.like(name)).all()
 
     @classmethod
-    def find_by_id(cls, _id):
+    def find_by_id(cls, _uid, _sid, _pid):
         """
         Find the given product id, in the db
         """
-        return cls.query.filter_by(id=_id).first()
+        return cls._base_query(_uid, _sid).filter_by(id=_pid).scalar()
 
     @classmethod
-    def find_in_store(cls, _sid, _pid):
+    def find_in_user_store(cls, _uid, _sid, _pid):
+        """
+        Find the product from a particular user store
+        """
+        # cls.query.filter(cls.store.any(id=_sid)).filter(cls.id == _pid).first()
+        return cls._base_query(_uid, _sid).filter_by(id=_pid).scalar()
+
+    @classmethod
+    def find_by_name(cls, _uid, _sid, name):
         """
         Find the given in the db
         """
-        return cls.query.filter(cls.store.any(id=_sid)) \
-                        .filter(cls.id == _pid).first()
-
-    @classmethod
-    def find_by_name(cls, name):
-        """
-        Find the given in the db
-        """
-        return cls.query.filter_by(name=name).first()
+        return cls._base_query(_uid, _sid).filter_by(name=name).all()
 
     def save_to_db(self):
         db.session.add(self)

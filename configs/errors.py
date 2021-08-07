@@ -1,14 +1,13 @@
 errors = {
-    "DB":  {
+    "DB": {
         "DB_INSERTION_ERROR": {
-            "RESPONSE":{
+            "RESPONSE": {
                 "status": False,
-                "error_code":"DB_INSERTION_ERROR",
-                "message": "Some Error Occured while inserting the data"
-                },
-            "STATUS_CODE": 400
+                "error_code": "DB_INSERTION_ERROR",
+                "message": "Some Error Occured while inserting the data",
+            },
+            "STATUS_CODE": 400,
         }
-            
     }
 }
 

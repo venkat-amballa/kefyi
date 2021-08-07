@@ -6,10 +6,11 @@ class UserModel(db.Model):
     User Model, this user has ownership of one/mutiple stores.
     misc columns: stores []
     """
+
     __tablename__ = "users"
 
     id = db.Column(db.Integer, primary_key=True)
-    username =  db.Column(db.String(80), nullable=False, unique=True)
+    username = db.Column(db.String(80), nullable=False, unique=True)
     first_name = db.Column(db.String(80), nullable=False)
     last_name = db.Column(db.String(80))
     password = db.Column(db.String(80), nullable=False)
@@ -17,9 +18,11 @@ class UserModel(db.Model):
     email = db.Column(db.String(80))
     mobile = db.Column(db.String(20), nullable=False)
 
-    stores = db.relationship('StoreModel', backref='user_owner')
+    stores = db.relationship("StoreModel", backref="user_owner")
 
-    def __init__(self, username, first_name, last_name, password, address, email, mobile):
+    def __init__(
+        self, username, first_name, last_name, password, address, email, mobile
+    ):
         self.username = username
         self.first_name = first_name
         self.last_name = last_name
@@ -37,17 +40,17 @@ class UserModel(db.Model):
         db.session.commit()
 
     def json(self):
-        email = self.email.split('@')
+        email = self.email.split("@")
         mobile = self.mobile
-        mobile = "********"+mobile[-2:]
-        email = "******"+email[0][-2:]+"@"+email[1],
+        mobile = "********" + mobile[-2:]
+        email = ("******" + email[0][-2:] + "@" + email[1],)
         return {
             "id": self.id,
             "first_name": self.first_name,
-            "last_name":self.last_name,
-            "username":self.username,
-            "email":email,
-            "mobile":mobile
+            "last_name": self.last_name,
+            "username": self.username,
+            "email": email,
+            "mobile": mobile,
         }
 
     @classmethod

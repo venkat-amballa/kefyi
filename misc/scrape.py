@@ -2,8 +2,9 @@ import json, os
 import pandas as pd
 
 from bs4 import BeautifulSoup
+
 html_docs = [
-    '''
+    """
 <body data-new-gr-c-s-check-loaded="14.1024.0" data-gr-ext-installed="">
     <div id="__next">
         <div class="jsx-2634079815 container">
@@ -2619,8 +2620,8 @@ html_docs = [
     <script crossorigin="anonymous"
         src="/_next/static/chunks/pages/%5Bstore%5D/products/%5BproductSlug%5D-f8d2e76de1cd2db9c872.js"></script>
 </body>
-''',
-    '''<body data-new-gr-c-s-check-loaded="14.1024.0" data-gr-ext-installed="">
+""",
+    """<body data-new-gr-c-s-check-loaded="14.1024.0" data-gr-ext-installed="">
         <div id="__next">
             <div class="jsx-557838763 container">
                 <div class="jsx-557838763 bar">
@@ -3642,8 +3643,8 @@ html_docs = [
                 <div class="weava-drop-area-text">Drop here!</div>
             </div>
         </div>
-    </body>''',
-'''<body data-new-gr-c-s-check-loaded="14.1024.0" data-gr-ext-installed="">
+    </body>""",
+    """<body data-new-gr-c-s-check-loaded="14.1024.0" data-gr-ext-installed="">
     <div id="__next">
         <div class="jsx-557838763 container">
             <div class="jsx-557838763 bar">
@@ -4502,8 +4503,8 @@ html_docs = [
             <div class="weava-drop-area-text">Drop here!</div>
         </div>
     </div>
-</body>''',
-'''<body data-new-gr-c-s-check-loaded="14.1024.0" data-gr-ext-installed="">
+</body>""",
+    """<body data-new-gr-c-s-check-loaded="14.1024.0" data-gr-ext-installed="">
     <div id="__next">
         <div class="jsx-2634079815 container">
             <div class="jsx-2634079815 bar">
@@ -5667,8 +5668,8 @@ html_docs = [
             <div class="weava-drop-area-text">Drop here!</div>
         </div>
     </div>
-</body>''',
-    '''<body data-new-gr-c-s-check-loaded="14.1024.0" data-gr-ext-installed="">
+</body>""",
+    """<body data-new-gr-c-s-check-loaded="14.1024.0" data-gr-ext-installed="">
     <div id="__next">
         <div class="jsx-2634079815 container">
             <div class="jsx-2634079815 bar">
@@ -6402,8 +6403,8 @@ html_docs = [
     </div>
     <script crossorigin="anonymous"
         src="/_next/static/chunks/pages/%5Bstore%5D/products/%5BproductSlug%5D-f8d2e76de1cd2db9c872.js"></script>
-</body>''',
-    '''<body data-new-gr-c-s-check-loaded="14.1024.0" data-gr-ext-installed="">
+</body>""",
+    """<body data-new-gr-c-s-check-loaded="14.1024.0" data-gr-ext-installed="">
   <div id="__next">
     <div class="jsx-2634079815 container">
       <div class="jsx-2634079815 bar">
@@ -11008,9 +11009,9 @@ html_docs = [
       <div class="weava-drop-area-text">Drop here!</div>
     </div>
   </div>
-</body>''',
+</body>""",
 ]
-html_doc = '''<body data-new-gr-c-s-check-loaded="14.1024.0" data-gr-ext-installed="" style="">
+html_doc = """<body data-new-gr-c-s-check-loaded="14.1024.0" data-gr-ext-installed="" style="">
   <div id="__next">
     <div class="jsx-557838763 container">
       <div class="jsx-557838763 bar">
@@ -11468,62 +11469,64 @@ html_doc = '''<body data-new-gr-c-s-check-loaded="14.1024.0" data-gr-ext-install
   </div>
   <script crossorigin="anonymous"
     src="/_next/static/chunks/pages/%5Bstore%5D/categories-fd5bed05fd1b77442177.js"></script>
-</body>'''
+</body>"""
 
-file_name = 'staples'
-file_name = 'flours'
-file_name = 'ravva'
-file_name = 'dals'
-file_name = 'sweets'
-file_name = 'masalalu'
-file_name = 'oils'
-file_name = 'dry fruits'
-file_name = 'dairy'
-file_name = 'beverages'
-file_name = 'Snacks & Branded Foods'
-file_name = 'HomeCare'
-file_name = 'personal-care'
-file_name = 'baby-care'
-file_name = 'millets'
-file_name = 'puja items'
-file_name = 'animal feeds'
-file_name = 'disposable items'
-file_name = 'aquaculture products'
-file_name = 'categories'
+file_name = "staples"
+file_name = "flours"
+file_name = "ravva"
+file_name = "dals"
+file_name = "sweets"
+file_name = "masalalu"
+file_name = "oils"
+file_name = "dry fruits"
+file_name = "dairy"
+file_name = "beverages"
+file_name = "Snacks & Branded Foods"
+file_name = "HomeCare"
+file_name = "personal-care"
+file_name = "baby-care"
+file_name = "millets"
+file_name = "puja items"
+file_name = "animal feeds"
+file_name = "disposable items"
+file_name = "aquaculture products"
+file_name = "categories"
 
-soup = BeautifulSoup(html_doc, 'html.parser')
+soup = BeautifulSoup(html_doc, "html.parser")
 
-links = soup.select('li > div > a > img')
+links = soup.select("li > div > a > img")
 # links_list  = [link["src"] for link in links]
 print("links: ", len(links))
-items = soup.select('li > div:nth-of-type(2)')
+items = soup.select("li > div:nth-of-type(2)")
 print(len(items))
 product_items = []
 for i in range(len(items)):
     print(i)
-    name = items[i].select('a>span')[0].text
+    name = items[i].select("a>span")[0].text
     # print(name)
-    weight = items[i].select('div>span')[0].text
-    actual_price = items[i].select('div>div>div>span')[0].text.strip('₹')
+    weight = items[i].select("div>span")[0].text
+    actual_price = items[i].select("div>div>div>span")[0].text.strip("₹")
     try:
-        striked_price = items[i].select('div>div>div>span:nth-of-type(2)')[0].text.strip('₹')
+        striked_price = (
+            items[i].select("div>div>div>span:nth-of-type(2)")[0].text.strip("₹")
+        )
     except Exception as e:
         striked_price = None
 
     item = {
-        "url":links[i]["src"],
+        "url": links[i]["src"],
         "name": " ".join(name.split()),
         "weight": " ".join(weight.split()),
-        "actual_price":actual_price,
-        "striked_price":striked_price
+        "actual_price": actual_price,
+        "striked_price": striked_price,
     }
     product_items.append(item)
     # print(item)
 print(len(product_items))
 df = pd.DataFrame.from_dict(product_items)
-df['category'] = file_name
-df.to_csv(os.path.join(os.getcwd(),'op',file_name+'.csv'))
+df["category"] = file_name
+df.to_csv(os.path.join(os.getcwd(), "op", file_name + ".csv"))
 print(file_name)
-    # print(f"link: {item['url']} name: {name}, weight: {weight}, actual_price: {actual_price}, striked_price: {striked_price}")
+# print(f"link: {item['url']} name: {name}, weight: {weight}, actual_price: {actual_price}, striked_price: {striked_price}")
 
 # print(len(links))

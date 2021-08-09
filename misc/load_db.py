@@ -43,7 +43,8 @@ def all_df_list():
 
     df = pd.concat(df_list)
     df = df[COLS]
-    df.to_csv("final_df1.csv")
+    df.loc[df['actual_price'].isna(), "actual_price"] = 0
+    df.to_csv("final_df1.csv", index=False)
     print(df.shape, pd_items.columns)
     return df_list, df
 

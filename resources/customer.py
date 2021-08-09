@@ -1,6 +1,6 @@
 from flask_restful import Resource, reqparse
 from flask import request
-from models.cutomer import CustomerModel
+from models.customer import CustomerModel
 
 
 class CustomerOrders(Resource):

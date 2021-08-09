@@ -22,6 +22,9 @@ class CustomerModel(db.Model):
     email = db.Column(db.String(80))
     mobile = db.Column(db.String(20), nullable=False)
 
+    created_on = db.Column(db.DateTime, server_default=db.func.now())
+    updated_on = db.Column(db.DateTime, onupdate=db.func.now())
+
     bills = db.relationship("CustomerOrderModel", back_populates="customer")
 
     def __init__(self, first_name, last_name, address, email, mobile):

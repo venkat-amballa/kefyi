@@ -42,7 +42,7 @@ class ProductList(Resource):
 """
 
 
-class ProdctItem(Resource):
+class ProductItem(Resource):
     @jwt_required()
     def get(self, id):
         # find by id

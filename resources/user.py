@@ -54,9 +54,9 @@ class UserRegister(Resource):
         # TODO: add regex to verify this
         if len(username.strip()) < 5:
             return {
-                "status": False,
-                "message": "Username length should be greater than 4",
-            }, 400
+                       "status": False,
+                       "message": "Username length should be greater than 4",
+                   }, 400
         # if data.get('password') != data.get('retype-password'):
         #     return {"message": "Password entered in retype password, password must be same"}, 400
         try:
@@ -94,7 +94,7 @@ class User(Resource):
             return {"status": False, "message": "User Not Found"}, 404
 
         if user.username == data.get("username", None) and safe_str_cmp(
-            user.password, data.get("password", None)
+                user.password, data.get("password", None)
         ):
             response = {"status": True, "user": user.json()}
             return response, 200
@@ -104,19 +104,27 @@ class User(Resource):
     @jwt_required(fresh=True)
     def delete(cls):
         id = get_jwt_identity()
+        data = _user_parser.parse_args()
+        print(id)
         user = UserModel.find_by_id(id)
-
-        if not user:
+        if user is None:
             return {"status": False, "message": "User Not Found"}, 404
         try:
-            user.delete_from_db()
+            if (user.username == data.get("username", None)) and \
+                    safe_str_cmp(user.password, data.get("password", None)):
+                # TODO - handle user associated stores first
+                jti = get_jwt()["jti"]
+                BLOCKLIST.add(jti)
+                user.delete_from_db()
+                return {"status": True, "message": "user deleted"}
+            else:
+                return {"status": False, "message": "Incorrect password"}
         except Exception as e:
             print(e)
             return {
                 "status": False,
-                "message": "User cant be deleted, Exception in user delete",
+                "message": "User cant be deleted, Exception in user delete. Handle user related stores",
             }
-        return {"status": True, "message": "User deleted Successfully"}, 200
 
 
 class UserLogin(Resource):
@@ -130,6 +138,9 @@ class UserLogin(Resource):
         data = _user_parser.parse_args()
         user = UserModel.find_by_username(data.get("username", None))
         print("user login request received")
+        if not user:
+            return {"status": False, "message": "Not Registered..! kindly register before you login"}, 200
+
         if user and safe_str_cmp(user.password, data.get("password", None)):
             login_status = True
             jwt_token = create_access_token(
@@ -137,10 +148,10 @@ class UserLogin(Resource):
             )
             refresh_token = create_refresh_token(user.id)
             return {
-                "status": login_status,
-                "access_token": jwt_token,
-                "refresh_token": refresh_token,
-            }, 200
+                       "status": login_status,
+                       "access_token": jwt_token,
+                       "refresh_token": refresh_token,
+                   }, 200
 
         return {"status": login_status, "message": "Invalid Credentials"}, 401
 
@@ -160,7 +171,6 @@ class UserLogout(Resource):
         jti = get_jwt()["jti"]
         BLOCKLIST.add(jti)
         return {
-            "status": True,
-            "jti": jti,
-            "message": "User Logout Successfull..!",
-        }, 200
+                   "status": True,
+                   "message": "User Logout Successful..!",
+               }, 200

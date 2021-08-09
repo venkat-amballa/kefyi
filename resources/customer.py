@@ -4,11 +4,10 @@ from models.cutomer import CustomerModel
 
 
 class CustomerOrders(Resource):
-    def get(self, id):
-        orders = CustomerModel.orders(id)
+    def get(self, cid):
+        orders = CustomerModel.orders(cid)
         if orders:
             return {"status": True, "bills": [order.json() for order in orders]}, 200
-
         return {"status": True, "bills": []}, 200
 
 

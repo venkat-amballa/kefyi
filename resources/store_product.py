@@ -16,6 +16,7 @@ ERROR_CODES = {
     "PRODUCT_NAME_REQUIRED": "PRODUCT_NAME_REQUIRED",
     "PRODUCT_NAME_DUPLICATE": "PRODUCT_NAME_DUPLICATE",
     "INVALID_STORE": "INVALID_STORE",
+    "EMPTY_STORE": "EMPTY_STORE",
     "PRODUCT_DATA_MISSING": "PRODUCT_DATA_MISSING",
 }
 
@@ -25,6 +26,7 @@ ERROR_MSG = {
     "PRODUCT_NAME_REQUIRED": "Product name is required",
     "PRODUCT_NAME_DUPLICATE": "There exists a product with the same name",
     "INVALID_STORE": "No such store for the user",
+    "EMPTY_STORE": "No products in a store",
     "PRODUCT_DATA_MISSING": "Product data is missing",
 }
 
@@ -90,14 +92,21 @@ class StoreProduct(Resource):
 class StoreProducts(Resource):
     @jwt_required()
     def get(self, s_id):
+        """get store products"""
         user_id = get_jwt_identity()
-        products = ProductModel.find_all(user_id, s_id)
-        if products:
+        store = StoreModel.find_by_id(user_id, s_id)
+        if not store:
+            return {"status": False, "store_id": s_id,
+                    "error_code": ERROR_CODES["INVALID_STORE"],
+                    "message": ERROR_MSG["INVALID_STORE"],
+                    }, 200
+        products = StoreModel.store_products(user_id, s_id)
+        if isinstance(products, list):
             product_list = [p.json() for p in products]
             return {"status": True, "store_id": s_id, "products": product_list}, 200
         return {"status": False, "store_id": s_id,
-                "error_code": ERROR_CODES["INVALID_STORE"],
-                "message": ERROR_MSG["INVALID_STORE"],
+                "error_code": ERROR_CODES["EMPTY_STORE"],
+                "message": ERROR_MSG["EMPTY_STORE"],
                 }, 200
 
     @jwt_required()
@@ -134,7 +143,7 @@ class StoreProducts(Resource):
             product = ProductModel(
                 name=data.get("name"),
                 url=data.get("url", None),
-                category=data.get("url"),
+                category=data.get("category"),
                 description=data.get("description", None),
                 unit=data.get("unit"),
                 actual_price=data.get("actual_price"),
@@ -149,9 +158,9 @@ class StoreProducts(Resource):
                 "message": ERROR_MSG["PRODUCT_DATA_MISSING"],
             }, 400
 
-        # saving only in store.products is enough and product.save_to_db() isn't needed.
-        store.products.append(product)
         try:
+            # saving only in store.products is enough and product.save_to_db() isn't needed.
+            store.products.append(product)
             store.save_to_db()  # save the store after adding the product.
         except Exception as e:
             return {

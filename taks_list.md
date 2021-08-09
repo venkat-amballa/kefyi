@@ -106,8 +106,7 @@ BUG FIXES
 
 api.add_resource(Test, "/stores/<int:s_id>/product/<int:p_id")
 
-DATABASE_URL=postgresql://bkfsjolrjonwbh:b14284e4edf8faad5ca9d9692ee5efb2f2a0ddef72ecc9f48ae808b0b8421
-40a@ec2-176-34-105-15.eu-west-1.compute.amazonaws.com:5432/d9oie576iqt1es
+DATABASE_URL=postgresql://bkfsjolrjonwbh:b14284e4edf8faad5ca9d9692ee5efb2f2a0ddef72ecc9f48ae808b0b8421 40a@ec2-176-34-105-15.eu-west-1.compute.amazonaws.com:5432/d9oie576iqt1es
 
 Host
 ec2-176-34-105-15.eu-west-1.compute.amazonaws.com

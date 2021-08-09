@@ -47,8 +47,19 @@ class StoreModel(db.Model):
         db.session.commit()
 
     @classmethod
+    def store_products(cls, _uid, _sid):
+        """All products of a store"""
+        res = cls.query.filter_by(user_id=_uid, id=_sid).first()
+        if res:
+            return res.products
+        return res
+
+    @classmethod
     def store_orders(cls, _uid, _sid):
-        return cls.query.filter_by(user_id=_uid, id=_sid).all()
+        res = cls.query.filter_by(user_id=_uid, id=_sid).first()
+        if res:
+            return res.orders
+        return res
 
     @classmethod
     def find_by_id(cls, _uid, _id):
@@ -79,9 +90,3 @@ class StoreModel(db.Model):
             "user_id": self.user_id,
         }
 
-    def productlist_json(self):
-        return {
-            "id": self.id,
-            "products": [product.json() for product in self.products],
-            "user_id": self.user_id,
-        }

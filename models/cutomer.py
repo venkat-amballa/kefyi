@@ -7,7 +7,7 @@ class CustomerModel(db.Model):
     v1: Buys from a store, No password required as the store owner makes the bill,
         for the customer.
         - No username, password
-    v2: Buys online, The bill will be generated after successfull transaction. He has his own identity
+    v2: Buys online, The bill will be generated after successful transaction. He has his own identity
         i.e, they have their own username, password.
     """
 
@@ -50,14 +50,14 @@ class CustomerModel(db.Model):
 
     @classmethod
     def orders(cls, _cid):
-        return cls.query.filter_by(id=_cid).scalar()
+        return cls.query.filter_by(id=_cid).first().bills
 
     @classmethod
     def find_by_id(cls, _id):
         """
         Find the given in the db
         """
-        return cls.query.filter_by(id=_id).first()
+        return cls.query.filter_by(id=_id).scalar()
 
     @classmethod
     def find_by_first_name(cls, first_name):

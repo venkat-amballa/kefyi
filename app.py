@@ -10,7 +10,7 @@ from db import db
 from resources.home import Home
 
 # from resources.product import Product, ProductList
-from resources.product import Product, ProdctItem
+from resources.product import Product, ProductItem
 from resources.categories import Categories
 from resources.user import UserRegister, UserLogin, User, TokenRefresh, UserLogout
 from resources.store import Store, StoreList, StoreOrders
@@ -106,7 +106,7 @@ def revoked_token_callback(jwt_header, jwt_payload):
 api.add_resource(Home, "/")
 
 # api.add_resource(ProductList, "/all_products")
-api.add_resource(ProdctItem, "/products/<int:id>")
+api.add_resource(ProductItem, "/products/<int:id>")
 api.add_resource(Product, "/products")
 api.add_resource(Categories, "/categories")
 
@@ -114,7 +114,7 @@ api.add_resource(Order, "/order")
 api.add_resource(OrderData, "/order/<int:id>")
 
 api.add_resource(Customer, "/customer/register")
-api.add_resource(CustomerOrders, "/customer/<int:id>/orders")
+api.add_resource(CustomerOrders, "/customer/<int:cid>/orders")
 
 api.add_resource(UserRegister, "/user/register")
 api.add_resource(User, "/user")

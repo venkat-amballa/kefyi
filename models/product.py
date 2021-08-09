@@ -88,13 +88,6 @@ class ProductModel(db.Model):
         return cls.query.filter(cls.store.any(user_id=_uid, id=_sid))
 
     @classmethod
-    def find_all(cls, _uid, _sid):
-        """
-        Find the given products of a store, in the db
-        """
-        return cls._base_query(_uid, _sid).all()
-
-    @classmethod
     def find_similar(cls, _uid, _sid, name):
         """
         Find the given in the db

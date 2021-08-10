@@ -145,6 +145,7 @@ class StoreProducts(Resource):
                 url=data.get("url", None),
                 category=data.get("category"),
                 description=data.get("description", None),
+                brand=data.get("brand"),
                 unit=data.get("unit"),
                 actual_price=data.get("actual_price"),
                 wholesale_price=data.get("wholesale_price"),

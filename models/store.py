@@ -11,6 +11,8 @@ class StoreModel(db.Model):
     name = db.Column(db.String(100))
     address = db.Column(db.String(150))
     contact = db.Column(db.String(50))
+    created_on = db.Column(db.DateTime, server_default=db.func.now())
+    updated_on = db.Column(db.DateTime, onupdate=db.func.now())
     # user_id is the owner id of the store
     user_id = db.Column(
         db.Integer, db.ForeignKey("users.id"), nullable=False
@@ -20,6 +22,7 @@ class StoreModel(db.Model):
     )
 
     orders = db.relationship("CustomerOrderModel", back_populates="store")
+    enable = db.Column(db.Boolean, server_default='True')
     # type = grocery, medical, clothes, electronic etc
     # id
     # name
@@ -88,5 +91,8 @@ class StoreModel(db.Model):
             "address": self.address,
             "contact": self.contact,
             "user_id": self.user_id,
+            "created_on": self.created_on,
+            "updated_on": self.updated_on,
+            "enable": self.enable,
         }
 

@@ -18,6 +18,9 @@ class UserModel(db.Model):
     email = db.Column(db.String(80))
     mobile = db.Column(db.String(20), nullable=False)
 
+    created_on = db.Column(db.DateTime, server_default=db.func.now())
+    updated_on = db.Column(db.DateTime, onupdate=db.func.now())
+
     stores = db.relationship("StoreModel", backref="user_owner")
 
     def __init__(

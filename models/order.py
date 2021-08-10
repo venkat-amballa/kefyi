@@ -15,6 +15,10 @@ class CustomerOrderModel(db.Model):
     """
     id = db.Column(db.Integer, primary_key=True)
     amount = db.Column(db.Float(precision=3), nullable=False)
+
+    created_on = db.Column(db.DateTime, server_default=db.func.now())
+    updated_on = db.Column(db.DateTime, onupdate=db.func.now())
+
     # customer(parent)
     customer_id = db.Column(db.Integer, db.ForeignKey("customers.id"))
     customer = db.relationship("CustomerModel", back_populates="bills")
@@ -51,6 +55,7 @@ class CustomerOrderModel(db.Model):
             "sale_type": self.sale_type,
             "status": self.status,
             "amount": self.amount,
+            "ordered_on": self.created_on,
             # "products": [prod_order.product.json() for prod_order in self.products]
             "products": [prod_order.json() for prod_order in self.products],
         }

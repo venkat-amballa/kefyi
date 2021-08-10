@@ -22,7 +22,7 @@ class Categories(Resource):
             "millets/చిరు ధాన్యాలు",
             "puja items",
             "animal feeds",
-            "disposibles items",
+            "disposables items",
             "aquaculture",
         ]
 

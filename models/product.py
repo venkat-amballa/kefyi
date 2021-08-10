@@ -19,13 +19,16 @@ class ProductModel(db.Model):
     category = db.Column(db.String(40), nullable=False)
     unit = db.Column(db.String(20), nullable=False)
     # these created on and updated_on are causing error in heroku, posstgresql
-    # created_on = db.Column(db.DateTime, server_default=db.func.now())
-    # updated_on = db.Column(db.DateTime, server_default=db.func.now(), server_onupdate=db.func.now())
+    created_on = db.Column(db.DateTime, server_default=db.func.now())
+    updated_on = db.Column(db.DateTime, onupdate=db.func.now())
     # column names, i.e, actual_price, wholesale_price, retail_price if changed. Update them in configs.constants
     actual_price = db.Column(db.Float(precision=3), nullable=False)
     wholesale_price = db.Column(db.Float(precision=3), nullable=False)
     retail_price = db.Column(db.Float(precision=3), nullable=False)
     quantity = db.Column(db.Integer, nullable=False)
+
+    brand = db.Column(db.String(100))
+    enable = db.Column(db.Boolean(), server_default='True')
     # store -> reference from StoreModel
 
     # bills_in = db.relationship('CustomerOrderModel', secondary=products_bill, back_populates="products")
@@ -46,7 +49,7 @@ class ProductModel(db.Model):
     # price = db.Column(db.Float(precision=2))
     # price = db.Column(db.Float(precision=2))
 
-    def __init__(self, name, url, category, description, unit, actual_price, wholesale_price, retail_price, quantity):
+    def __init__(self, name, url, category, description, unit, actual_price, wholesale_price, retail_price, quantity, brand):
         self.name = name
         self.url = url
         self.category = category
@@ -56,6 +59,8 @@ class ProductModel(db.Model):
         self.wholesale_price = wholesale_price
         self.retail_price = retail_price
         self.quantity = quantity
+        self.brand = brand
+
 
     def json(self):
         return {
@@ -64,11 +69,15 @@ class ProductModel(db.Model):
             "url": self.url,
             "category": self.category,
             "description": self.description,
+            "brand": self.brand,
             "unit": self.unit,
             "actual_price": self.actual_price,
             "wholesale_price": self.wholesale_price,
             "retail_price": self.retail_price,
             "quantity": self.quantity,
+            "created_on": self.created_on,
+            "updated_on": self.updated_on,
+            "enable": self.enable,
         }
 
     def order_json(self):

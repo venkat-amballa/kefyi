@@ -21,7 +21,7 @@ class ProdConfig(Config):
 class DevConfig(Config):
     ENV = "Development"
     DEBUG = True
-    SQLALCHEMY_DATABASE_URI = os.environ.get("DATABASE_URL", "sqlite:///data.db")
+    SQLALCHEMY_DATABASE_URI = os.environ.get("DATABASE_DEV_URL", "sqlite:///data.db")
     # SQLALCHEMY_DATABASE_URI = "sqlite:///data.db"
     JWT_SECRET_KEY = "#^Uo8=_%$#n).<@|"
 

@@ -1,7 +1,7 @@
 from db import db
 
 # from models.secondary_tables import products_bill
-
+from utils import date_format
 
 class ProductModel(db.Model):
     """
@@ -20,7 +20,7 @@ class ProductModel(db.Model):
     unit = db.Column(db.String(20), nullable=False)
     # these created on and updated_on are causing error in heroku, posstgresql
     created_on = db.Column(db.DateTime, server_default=db.func.now())
-    updated_on = db.Column(db.DateTime, onupdate=db.func.now())
+    updated_on = db.Column(db.DateTime, server_default=db.func.now(), onupdate=db.func.now())
     # column names, i.e, actual_price, wholesale_price, retail_price if changed. Update them in configs.constants
     actual_price = db.Column(db.Float(precision=3), nullable=False)
     wholesale_price = db.Column(db.Float(precision=3), nullable=False)
@@ -75,8 +75,8 @@ class ProductModel(db.Model):
             "wholesale_price": self.wholesale_price,
             "retail_price": self.retail_price,
             "quantity": self.quantity,
-            "created_on": self.created_on,
-            "updated_on": self.updated_on,
+            "created_on": date_format(self.created_on),
+            "updated_on": date_format(self.updated_on),
             "enable": self.enable,
         }
 

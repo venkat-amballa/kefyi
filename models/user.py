@@ -1,4 +1,5 @@
 from db import db
+from utils import date_format
 
 
 class UserModel(db.Model):
@@ -19,7 +20,7 @@ class UserModel(db.Model):
     mobile = db.Column(db.String(20), nullable=False)
 
     created_on = db.Column(db.DateTime, server_default=db.func.now())
-    updated_on = db.Column(db.DateTime, onupdate=db.func.now())
+    updated_on = db.Column(db.DateTime, server_default=db.func.now(), onupdate=db.func.now())
 
     stores = db.relationship("StoreModel", backref="user_owner")
 
@@ -54,6 +55,7 @@ class UserModel(db.Model):
             "username": self.username,
             "email": email,
             "mobile": mobile,
+            "created_on": date_format(self.created_on),
         }
 
     @classmethod

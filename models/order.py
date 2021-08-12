@@ -2,6 +2,7 @@ from datetime import datetime
 from db import db
 
 from models.secondary_tables import ProductOrders
+from utils import date_format
 
 
 class CustomerOrderModel(db.Model):
@@ -17,7 +18,7 @@ class CustomerOrderModel(db.Model):
     amount = db.Column(db.Float(precision=3), nullable=False)
 
     created_on = db.Column(db.DateTime, server_default=db.func.now())
-    updated_on = db.Column(db.DateTime, onupdate=db.func.now())
+    updated_on = db.Column(db.DateTime,  server_default=db.func.now(), onupdate=db.func.now())
 
     # customer(parent)
     customer_id = db.Column(db.Integer, db.ForeignKey("customers.id"))
@@ -32,7 +33,7 @@ class CustomerOrderModel(db.Model):
     products = db.relationship('ProductOrders') # association table `ProductOrders` is referenced here instead of `ProductModel`
 
     status = db.Column(db.String(1), nullable=False)
-    # isdebt = True # if payment type is paylater.
+    # isdebt = True # if payment type is pay later.
     # isactive = True # if the payment is pending.
     # status = ["success", "failure", "pending"]
 
@@ -55,7 +56,8 @@ class CustomerOrderModel(db.Model):
             "sale_type": self.sale_type,
             "status": self.status,
             "amount": self.amount,
-            "ordered_on": self.created_on,
+            "created_on": date_format(self.created_on),
+            "updated_on": date_format(self.updated_on),
             # "products": [prod_order.product.json() for prod_order in self.products]
             "products": [prod_order.json() for prod_order in self.products],
         }
@@ -63,3 +65,8 @@ class CustomerOrderModel(db.Model):
     @classmethod
     def find_by_id(cls, _id):
         return cls.query.filter_by(id=_id).first()
+
+    @classmethod
+    def products_in_order(cls, _id, _pids):
+        return ProductOrders.query.filter(ProductOrders.order_id==_id).filter(ProductOrders.product_id.in_(_pids)).all()
+        # return cls.query.filter(cls.id == _id).filter(cls.products.id.in_(_pids)).all()

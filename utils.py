@@ -1,4 +1,5 @@
 from configs import config
+from configs.constants import DATE_FORMAT_STR
 
 ENVS = ["DEV", "STAGE", "PROD"]
 
@@ -14,3 +15,8 @@ def load_config(app, env):
         env_config = config.ProdConfig
 
     app.config.from_object(env_config)
+
+
+def date_format(date):
+    return date.strftime(DATE_FORMAT_STR)
+

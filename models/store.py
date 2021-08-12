@@ -1,5 +1,6 @@
 from db import db
 from models.secondary_tables import store_product
+from utils import date_format
 
 
 class StoreModel(db.Model):
@@ -12,7 +13,7 @@ class StoreModel(db.Model):
     address = db.Column(db.String(150))
     contact = db.Column(db.String(50))
     created_on = db.Column(db.DateTime, server_default=db.func.now())
-    updated_on = db.Column(db.DateTime, onupdate=db.func.now())
+    updated_on = db.Column(db.DateTime, server_default=db.func.now(),  onupdate=db.func.now())
     # user_id is the owner id of the store
     user_id = db.Column(
         db.Integer, db.ForeignKey("users.id"), nullable=False
@@ -91,8 +92,8 @@ class StoreModel(db.Model):
             "address": self.address,
             "contact": self.contact,
             "user_id": self.user_id,
-            "created_on": self.created_on,
-            "updated_on": self.updated_on,
+            "created_on": date_format(self.created_on),
+            "updated_on": date_format(self.updated_on),
             "enable": self.enable,
         }
 

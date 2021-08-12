@@ -88,7 +88,7 @@ class OrderHelper:
 
                 elif sale_type == SALE_TYPES[2]:  # custom
                     order_amount += (
-                        ordered_quantity * _dict_obj.custom_price
+                            ordered_quantity * _dict_obj.custom_price
                     )  # TODO - custom price, not implemented
                     billing_price = actual_product.custom_price
 

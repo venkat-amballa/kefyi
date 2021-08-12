@@ -12,6 +12,7 @@ from resources.home import Home
 # from resources.product import Product, ProductList
 from resources.product import Product, ProductItem
 from resources.categories import Categories
+from resources.refund import OrderRefund
 from resources.user import UserRegister, UserLogin, User, TokenRefresh, UserLogout
 from resources.store import Store, StoreList, StoreOrders
 from resources.customer import Customer, CustomerOrders
@@ -111,6 +112,7 @@ api.add_resource(Categories, "/categories")
 
 api.add_resource(Order, "/order")
 api.add_resource(OrderData, "/order/<int:id>")
+api.add_resource(OrderRefund, "/refund")
 
 api.add_resource(Customer, "/customer/register")
 api.add_resource(CustomerOrders, "/customer/<int:cid>/orders")

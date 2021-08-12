@@ -106,5 +106,22 @@ BUG FIXES
 
 api.add_resource(Test, "/stores/<int:s_id>/product/<int:p_id")
 
+elephant postgresql:
+set DATABASE_DEV_URL=postgres://bangfcwl:g2LeY0rRYdSougo5S6YBUvNqevu2c3E3@dumbo.db.elephantsql.com/bangfcwl
+
 set DATABASE_URL=postgresql://bkfsjolrjonwbh:b14284e4edf8faad5ca9d9692ee5efb2f2a0ddef72ecc9f48ae808b0b842140a@ec2-176-34-105-15.eu-west-1.compute.amazonaws.com:5432/d9oie576iqt1es
 
+Host
+ec2-176-34-105-15.eu-west-1.compute.amazonaws.com
+Database
+d9oie576iqt1es
+User
+bkfsjolrjonwbh
+Port
+5432
+Password
+b14284e4edf8faad5ca9d9692ee5efb2f2a0ddef72ecc9f48ae808b0b842140a
+URI
+postgres://bkfsjolrjonwbh:b14284e4edf8faad5ca9d9692ee5efb2f2a0ddef72ecc9f48ae808b0b842140a@ec2-176-34-105-15.eu-west-1.compute.amazonaws.com:5432/d9oie576iqt1es
+Heroku CLI
+heroku pg:psql postgresql-rigid-00077 --app api-kefyi

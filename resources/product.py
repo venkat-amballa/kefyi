@@ -72,9 +72,9 @@ class ProductItem(Resource):
         else:
             return {
                 "status": False,
-                "error_code": "PRODUCT_NOT_DOUND",
+                "error_code": "PRODUCT_NOT_FOUND",
                 "message": "No product with the given id, to update",
-            }, 400
+            }, 404
         # TODO
         # PUT method doesnot support any product creation, if there is no product with given id, returns an error.
         # else:

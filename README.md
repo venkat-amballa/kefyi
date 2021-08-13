@@ -4,7 +4,9 @@
     204 - No content, No content in the body.
     
     4xx - Bad Request
-    400 - Missing required field
+    400 - Missing required field, client side bad request
+    404 - Resource Not Found
+
     5xx - Issue in processing 
     503 - Database unreachable
 
@@ -37,8 +39,6 @@
 * https://haringo.com/telugu-grocery-product-names-from-english-to-telugu/
 
 * https://pdfdrivefiles.files.wordpress.com/2020/08/kirana-products-list.pdf
-
-[comment]: <> (API services :)
 
 * https://api.mymemory.translated.net/get?q=red%20lentils&langpair=en|te
 

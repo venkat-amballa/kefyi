@@ -1,7 +1,7 @@
 from datetime import datetime
 from db import db
 
-from models.secondary_tables import ProductOrders
+from models.secondary_tables import ProductOrdersAssociation
 from utils import date_format
 
 
@@ -30,9 +30,10 @@ class CustomerOrderModel(db.Model):
     sale_type = db.Column(db.String(20), nullable=False)
     # product(child)
     # products = db.relationship('ProductModel', secondary=products_bill, back_populates="bills_in")
-    products = db.relationship('ProductOrders') # association table `ProductOrders` is referenced here instead of `ProductModel`
+    products = db.relationship('ProductOrdersAssociation') # association table `ProductOrdersAssociation` is referenced here instead of `ProductModel`
+    refunds = db.relationship('RefundsModel')
 
-    status = db.Column(db.String(1), nullable=False)
+    status = db.Column(db.String(10), nullable=False) # [not_paid, paid, partial_payment]
     # isdebt = True # if payment type is pay later.
     # isactive = True # if the payment is pending.
     # status = ["success", "failure", "pending"]
@@ -68,5 +69,6 @@ class CustomerOrderModel(db.Model):
 
     @classmethod
     def products_in_order(cls, _id, _pids):
-        return ProductOrders.query.filter(ProductOrders.order_id==_id).filter(ProductOrders.product_id.in_(_pids)).all()
+        return ProductOrdersAssociation.query.filter(ProductOrdersAssociation.order_id == _id)\
+            .filter(ProductOrdersAssociation.product_id.in_(_pids)).all()
         # return cls.query.filter(cls.id == _id).filter(cls.products.id.in_(_pids)).all()

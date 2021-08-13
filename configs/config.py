@@ -29,6 +29,6 @@ class DevConfig(Config):
 class StageConfig(Config):
     ENV = "Stage"
     TESTING = True
-    SQLALCHEMY_DATABASE_URI = os.environ.get("DATABASE_URL", "sqlite:///stage.db")
+    SQLALCHEMY_DATABASE_URI = os.environ.get("DATABASE_STAGE_URL", "sqlite:///stage.db").replace("://", "ql://", 1)
     # SQLALCHEMY_DATABASE_URI = "sqlite:///stage.db"
     JWT_SECRET_KEY = "#^Uo8=_%$#n).@<|"

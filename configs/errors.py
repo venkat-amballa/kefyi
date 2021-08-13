@@ -6,7 +6,7 @@ errors = {
                 "error_code": "DB_INSERTION_ERROR",
                 "message": "Some Error Occured while inserting the data",
             },
-            "STATUS_CODE": 400,
+            "STATUS_CODE": 500,
         }
     }
 }

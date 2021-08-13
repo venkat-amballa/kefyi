@@ -37,12 +37,13 @@ app.secret_key = "#@%~4Lo*)+_=^"
 env = os.environ["ENV"]
 utils.load_config(app, env)
 
+print(f"Connected to: {app.config['SQLALCHEMY_DATABASE_URI']}")
 api = Api(app)
 
 jwt = JWTManager(app)
 # Database Migrations
-# db.init_app(app)
-# migrate = Migrate(app, db)
+db.init_app(app)
+migrate = Migrate(app, db)
 
 if env == "DEV":
     @app.before_first_request
@@ -112,7 +113,7 @@ api.add_resource(Categories, "/categories")
 
 api.add_resource(Order, "/order")
 api.add_resource(OrderData, "/order/<int:id>")
-api.add_resource(OrderRefund, "/refund")
+api.add_resource(OrderRefund, "/order/<int:order_id>/refund")
 
 api.add_resource(Customer, "/customer/register")
 api.add_resource(CustomerOrders, "/customer/<int:cid>/orders")
@@ -132,5 +133,5 @@ api.add_resource(StoreProducts, "/store/<int:s_id>/products")
 api.add_resource(StoreOrders, "/store/<int:store_id>/orders")
 
 if __name__ == "__main__":
-    db.init_app(app)
+    # db.init_app(app)
     app.run(port=5000)

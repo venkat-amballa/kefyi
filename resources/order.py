@@ -4,7 +4,7 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 
 from models.order import CustomerOrderModel
 from models.product import ProductModel
-from models.secondary_tables import ProductOrders
+from models.secondary_tables import ProductOrdersAssociation
 
 from configs.errors import errors
 from configs.constants import STATUS_CODE, SALE_TYPES
@@ -98,7 +98,7 @@ class Order(Resource):
                 )
                 for order_item in order_list:
                     # create parent, append a child via association
-                    a = ProductOrders(
+                    a = ProductOrdersAssociation(
                         price=order_item["price"], quantity=order_item["quantity"]
                     )
                     a.product = order_item["product"]

@@ -1,5 +1,5 @@
 from models.product import ProductModel
-from configs.constants import STATUS_CODE, SALE_TYPES
+from configs.constants import SALE_STATUS_CODE, SALE_TYPES
 
 
 class OrderHelper:
@@ -23,6 +23,7 @@ class OrderHelper:
                     }
                 )
         except Exception as error:
+            print(error)
             raise Exception(
                 "DB_Error while accessing Product Model from `OrderHelper` init"
             )
@@ -100,12 +101,14 @@ class OrderHelper:
                     }
                 )
         except Exception as e:
+            print(e)
             raise Exception("cant calculate bill for the order, calculate_order_amount")
 
         print("amount calculated")
         return order_amount, order_list
 
-    def update_items(self):
+    @staticmethod
+    def update_inventory(order):
         """
         Update the item quantity in db, but the ids
         and quantities should be verified using def order_validity
@@ -117,16 +120,14 @@ class OrderHelper:
 
         # Updating the quantity in the products db
         # TODO: Deduct the quantity in db, only after a valid payment.
-
+        order_products = order.products
         try:
-            for order_obj in self.actual_products_list:
-                actual_product = order_obj.get("orig_product_obj", None)
-                actual_product.quantity -= order_obj.get("ordered_quantity", None)
+            for order_obj in order_products:
+                actual_product = order_obj.product
+                actual_product.quantity -= order_obj.quantity
 
                 actual_product.save_to_db()
             return True
-        except Exception:
-            raise Exception(
-                "Cant update the quantity ordered in the db, in def update_items"
-            )
+        except Exception as e:
+            print(e)
         return False

@@ -3,12 +3,11 @@ from db import db
 
 from models.secondary_tables import ProductOrdersAssociation
 from utils import date_format
-
+from configs.constants import SALE_STATUS
 
 class CustomerOrderModel(db.Model):
 
     __tablename__ = "orders"
-
     """
     Operations that billing db should support
     1. customer bills: Get bills of a particular user
@@ -33,10 +32,10 @@ class CustomerOrderModel(db.Model):
     products = db.relationship('ProductOrdersAssociation') # association table `ProductOrdersAssociation` is referenced here instead of `ProductModel`
     refunds = db.relationship('RefundsModel')
 
-    status = db.Column(db.String(10), nullable=False) # [not_paid, paid, partial_payment]
+    status = db.Column(db.String(15), nullable=False)
     # isdebt = True # if payment type is pay later.
     # isactive = True # if the payment is pending.
-    # status = ["success", "failure", "pending"]
+    __table_args__ = (db.CheckConstraint(status.in_(SALE_STATUS)),)
 
     def __init__(self, customer_id, store_id, sale_type, status, amount) -> None:
         self.customer_id = customer_id

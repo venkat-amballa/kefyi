@@ -81,6 +81,7 @@ class StoreProduct(Resource):
             product.save_to_db()
             return {"status": True, "product": product.json()}, 200
         except (SQLAlchemyError, DBAPIError) as e:
+            print(e)
             return {
                 "status": False,
                 "error_code": ERROR_CODES["DB_INSERTION_ERROR"],
@@ -153,6 +154,7 @@ class StoreProducts(Resource):
                 quantity=data.get("quantity"),
             )
         except Exception as e:
+            print(e)
             return {
                 "status": False,
                 "error_code": ERROR_CODES["PRODUCT_DATA_MISSING"],
@@ -164,6 +166,7 @@ class StoreProducts(Resource):
             store.products.append(product)
             store.save_to_db()  # save the store after adding the product.
         except Exception as e:
+            print(e)
             return {
                 "status": False,
                 "error_code": ERROR_CODES["DB_INSERTION_ERROR"],

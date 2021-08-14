@@ -7,7 +7,7 @@ from models.product import ProductModel
 from models.secondary_tables import ProductOrdersAssociation
 
 from configs.errors import errors
-from configs.constants import STATUS_CODE, SALE_TYPES
+from configs.constants import SALE_STATUS_CODE, SALE_TYPES
 
 from helpers.order_helper import OrderHelper
 
@@ -42,9 +42,6 @@ class Order(Resource):
     def post(self):
         # data = Order.parser.parse_args()
         data = request.get_json()
-        # print(data)
-        # TODO:
-        # Each item in the producs should be unique, if required more of same item specify quantity.
 
         user_id = get_jwt_identity()
         # customer_id check
@@ -93,7 +90,7 @@ class Order(Resource):
                     customer_id=customer_id,
                     store_id=store_id,
                     sale_type=sale_type,
-                    status=STATUS_CODE["PENDING"],
+                    status=SALE_STATUS_CODE["PENDING"],
                     amount=order_amount,
                 )
                 for order_item in order_list:
@@ -105,19 +102,10 @@ class Order(Resource):
                     p.products.append(a)
 
                 p.save_to_db()
-                # update quantity in db
-                update_status = order_help_obj.update_items()
-                print("update status", update_status)
-                if not update_status:
-                    # return DB_INSERT_ERROR["RESPONSE"], DB_INSERT_ERROR['STATUS_CODE']
-                    return {
-                        "status": status,
-                        "message": "cant update the quantity in db",
-                    }
                 status = True
                 return {"status": status, "order_id": p.id, "amount": order_amount}, 200
-
             except Exception as error:
+                print(error)
                 return DB_INSERT_ERROR["RESPONSE"], DB_INSERT_ERROR["STATUS_CODE"]
         return {"status": status, "products": response_products}, 400
 
@@ -130,15 +118,34 @@ class Order(Resource):
         data = request.get_json()
         order_id = data.get("order_id", None)
         order_status = data.get("status", None)
+
+        if order_status not in SALE_STATUS_CODE.values():
+            return {"status": False,
+                    "error_code": "SALE_STATUS_INVALID",
+                    "message": "invalid sale status, no such sale status"
+                    }, 404
         # order of the current customer
         customer_order = CustomerOrderModel.find_by_id(order_id)
+        if not customer_order:
+            return {
+                "status": False,
+                "error_code": "INVALID_ORDER",
+                "message": "no such order exists"
+            }, 404
         return_status = False
         message = "Unable to update status of order"
-
-        if customer_order and order_status:
+        # update quantity in db
+        update_status = OrderHelper.update_inventory(customer_order)
+        print("update status", update_status)
+        if update_status:
             return_status = True
             message = "order status updated successfully"
-            customer_order.status = STATUS_CODE["SUCCESS"]
+            customer_order.status = order_status
             customer_order.save_to_db()
+            return {"status": return_status, "message": message}, 200
+        return {
+            "status": return_status,
+            "error_code": "",
+            "message": "cant update the quantity in inventory",
+        }
 
-        return {"status": return_status, "message": message}, 200

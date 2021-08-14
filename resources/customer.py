@@ -32,6 +32,7 @@ class Customer(Resource):
                 customer = CustomerModel(**data)
                 customer.save_to_db()
             except Exception as e:
+                print(e)
                 return {
                     "status": False,
                     "message": "DB ERROR, inserting into customer table failed",

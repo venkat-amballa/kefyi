@@ -70,6 +70,7 @@ class StoreList(Resource):
             store = StoreModel(user_id=id, **data)
             store.save_to_db()
         except Exception as e:
+            print(e)
             # TODO - LOGGER TO SAVE ERROR INFO
             return {
                 "status": False,

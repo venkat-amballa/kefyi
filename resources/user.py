@@ -62,7 +62,8 @@ class UserRegister(Resource):
         try:
             user = UserModel(**data)
             user.save_to_db()
-        except Exception:
+        except Exception as e:
+            print(e)
             return {"status": False, "message": "Error while creating user, in db"}, 500
         return {"status": True, "message": user.json()}, 201
 

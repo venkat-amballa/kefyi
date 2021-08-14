@@ -82,6 +82,7 @@ class ProductItem(Resource):
         try:
             product.save_to_db()
         except Exception as error:
+            print(error)
             error_dict = errors["DB"]["DB_INSERTION_ERROR"]
             return error_dict["RESPONSE"], error_dict["STATUS_CODE"]
 
@@ -175,6 +176,7 @@ class Product(Resource):
             product.save_to_db()  # save the product to product db
             store.save_to_db()  # save the store after adding the product.
         except Exception as e:
+            print(e)
             return {
                 "status": False,
                 "error_code": "DB_INSERTION_ERROR",

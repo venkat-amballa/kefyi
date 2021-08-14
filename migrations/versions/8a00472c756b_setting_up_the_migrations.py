@@ -67,7 +67,7 @@ def upgrade():
     sa.Column('customer_id', sa.Integer(), nullable=True),
     sa.Column('store_id', sa.Integer(), nullable=True),
     sa.Column('sale_type', sa.String(length=20), nullable=False),
-    sa.Column('status', sa.String(length=1), nullable=False),
+    sa.Column('status', sa.String(length=15), nullable=False),
     sa.ForeignKeyConstraint(['customer_id'], ['customers.id'], name=op.f('fk_orders_customer_id_customers')),
     sa.ForeignKeyConstraint(['store_id'], ['stores.id'], name=op.f('fk_orders_store_id_stores')),
     sa.PrimaryKeyConstraint('id', name=op.f('pk_orders'))

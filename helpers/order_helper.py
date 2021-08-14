@@ -19,6 +19,7 @@ class OrderHelper:
                 self.actual_products_list.append(
                     {
                         "ordered_quantity": product.get("quantity"),
+                        "ordered_price": product.get("custom_price", None),
                         "orig_product_obj": product_obj,
                     }
                 )
@@ -78,8 +79,16 @@ class OrderHelper:
                 # sale_type:["wholesale", "retail", "custom"]
                 actual_product = _dict_obj["orig_product_obj"]
                 ordered_quantity = _dict_obj["ordered_quantity"]
+                ordered_price = _dict_obj["ordered_price"]
                 # Calculating order amount based on sale type for each product
-                if sale_type == SALE_TYPES[0]:  # retail
+
+                if ordered_price or sale_type == SALE_TYPES[2]:  # custom
+                    raise Exception("handle custom price")
+                    order_amount += (
+                            ordered_quantity * ordered_price
+                    )  # TODO - custom price, not implemented
+                    billing_price = ordered_price
+                elif sale_type == SALE_TYPES[0]:  # retail
                     order_amount += ordered_quantity * actual_product.retail_price
                     billing_price = actual_product.retail_price
 
@@ -87,11 +96,7 @@ class OrderHelper:
                     order_amount += ordered_quantity * actual_product.wholesale_price
                     billing_price = actual_product.wholesale_price
 
-                elif sale_type == SALE_TYPES[2]:  # custom
-                    order_amount += (
-                            ordered_quantity * _dict_obj.custom_price
-                    )  # TODO - custom price, not implemented
-                    billing_price = actual_product.custom_price
+
 
                 order_list.append(
                     {

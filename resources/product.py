@@ -46,7 +46,8 @@ class ProductItem(Resource):
     @jwt_required()
     def get(self, id):
         # find by id
-        product = ProductModel.find_by_id(id)
+        user_id = get_jwt_identity()
+        product = ProductModel.find_by_barcode_or_id(id)
         if product:
             return product.json(), 200
         return {"message": "Product Not Found"}, 404
@@ -97,7 +98,7 @@ class ProductItem(Resource):
         product = ProductModel.find_by_id(id)
         if product:
             product.delete_from_db()
-            return {"Status": "Deleted Successfully"}, 200
+            return {"status": True, "message": "Deleted Successfully"}, 200
         return {"status": "Cant delete, Product not Found"}, 404
 
 

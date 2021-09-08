@@ -63,45 +63,49 @@ def token_revoked_callback(jwt_header, jwt_payload):
     jti = jwt_payload["jti"]
     return jti in BLOCKLIST
 
+
 @jwt.expired_token_loader
 def expired_token_callback(jwt_header, jwt_payload):
     return {
-        "status": False,
-        "message": "The token has expired",
-        "error_code": "token_expired",
-    }, 401
+               "status": False,
+               "message": "The token has expired",
+               "error_code": "token_expired",
+           }, 401
 
 
 @jwt.invalid_token_loader
 def invalid_token_callback(error):
     return {
-        "status": False,
-        "message": "Invalid token",
-        "error_code": "invalid_token",
-        "error": error,
-    }, 401
+               "status": False,
+               "message": "Invalid token",
+               "error_code": "invalid_token",
+           }, 401
 
 
 @jwt.unauthorized_loader
 def unauthorized_callback(error):
     return {
-        "message": "provide access token",
-        "error_code": "authorisation_required",
-        "error": error,
-    }, 401
+               "status": False,
+               "message": "provide access token",
+               "error_code": "authorisation_required",
+           }, 401
 
 
 @jwt.needs_fresh_token_loader
 def needs_fresh_token_callback(jwt_header, jwt_payload):
     return {
-        "message": "Login again for fresh access token",
-        "error": "needs_fresh_token",
-    }, 401
+               "status": False,
+               "message": "Login again for fresh access token",
+               "error_code": "needs_fresh_token",
+           }, 401
 
 
 @jwt.revoked_token_loader
 def revoked_token_callback(jwt_header, jwt_payload):
-    return {"message": "Token is revoked, login again", "error": "revoked_token"}, 401
+    return {
+               "status": False,
+               "message": "Token is revoked, login again",
+               "error_code": "revoked_token"}, 401
 
 
 api.add_resource(Home, "/")
@@ -115,7 +119,8 @@ api.add_resource(Order, "/order")
 api.add_resource(OrderData, "/order/<int:id>")
 api.add_resource(OrderRefund, "/order/<int:order_id>/refund")
 
-api.add_resource(Customer, "/customer/register")
+# api.add_resource(CustomerRegister, "/customer/register")
+api.add_resource(Customer, "/customer")
 api.add_resource(CustomerOrders, "/customer/<int:cid>/orders")
 
 api.add_resource(UserRegister, "/user/register")

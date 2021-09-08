@@ -27,14 +27,14 @@ def all_df_list():
 
         pd_items["category"] = cat_name
 
-        pd_items.rename(
-            columns={
-                "weight": "unit",
-                "actual_price": "retail_price",
-                "striked_price": "actual_price",
-            },
-            inplace=True,
-        )
+        # pd_items.rename(
+        #     columns={
+        #         "weight": "unit",
+        #         "actual_price": "retail_price",
+        #         "striked_price": "actual_price",
+        #     },
+        #     inplace=True,
+        # )
         pd_items["description"] = "this item is " + pd_items["name"]
         pd_items["wholesale_price"] = pd_items["retail_price"]
         pd_items["quantity"] = 20
@@ -44,7 +44,7 @@ def all_df_list():
     df = pd.concat(df_list)
     df = df[COLS]
     df.loc[df['actual_price'].isna(), "actual_price"] = 0
-    df.to_csv("final_df1.csv", index=False)
+    df.to_csv("final_df2.csv", index=False)
     print(df.shape, pd_items.columns)
     return df_list, df
 

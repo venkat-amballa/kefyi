@@ -4,10 +4,11 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 
 from models.order import CustomerOrderModel
 from models.product import ProductModel
+from models.customer import CustomerModel
 from models.secondary_tables import ProductOrdersAssociation
 
 from configs.errors import errors
-from configs.constants import SALE_STATUS_CODE, SALE_TYPES
+from configs.constants import SALE_STATUS_CODE, SALE_TYPES, SALE_STATUS_CLOSE
 
 from helpers.order_helper import OrderHelper
 
@@ -45,9 +46,12 @@ class Order(Resource):
 
         user_id = get_jwt_identity()
         # customer_id check
-        customer_id = data.get("customer_id", None)
-        if not customer_id:
-            return {"status": False, "message": "customer id cant be empty"}, 400
+        # customer_id = data.get("customer_id", None)
+        # if not customer_id:
+        #     return {"status": False, "message": "customer id cant be empty"}, 400
+        customer_mobile = data.get("customer_mobile", None)
+        if not customer_mobile:
+            return {"status": False, "message": "customer mobile cant be empty"}, 400
 
         # store id check
         store_id = data.get("store_id", None)
@@ -71,13 +75,20 @@ class Order(Resource):
                 "suggestion": "Its in the bucket list ..!, enjoy a quick breath while we develop it",
                 "message": "In the request body add the `custom price` as well, along the item body",
             }, 400
-        # TODO - Do we need saletype for every order item, looks like it can come in handy
+        # TODO - Do we need sale type for every order item, looks like it can come in handy
         #      - when the a complete sale is either retail or wholesale,
         #        but a couple of items in the order are of type custom, with custom price for them
+
         status = False
         order_help_obj = OrderHelper(products, user_id=user_id, store_id=store_id)
         order_valid, response_products = order_help_obj.is_order_valid()
         print("order_valid", order_valid)
+
+        # check and insert the customer if not present
+        customer = CustomerModel.find_by_mobile(customer_mobile)
+        if customer is None:
+            customer = CustomerModel(mobile=customer_mobile)
+            customer.save_to_db()
 
         if order_valid:  # TODO
             try:
@@ -87,7 +98,7 @@ class Order(Resource):
                 order_amount, order_list = order_help_obj.calculate_order_amount(sale_type)
 
                 p = CustomerOrderModel(
-                    customer_id=customer_id,
+                    customer_id=customer.id,
                     store_id=store_id,
                     sale_type=sale_type,
                     status=SALE_STATUS_CODE["PENDING"],
@@ -122,7 +133,12 @@ class Order(Resource):
         if order_status not in SALE_STATUS_CODE.values():
             return {"status": False,
                     "error_code": "SALE_STATUS_INVALID",
-                    "message": "invalid sale status, no such sale status"
+                    "message": f"No such sale status, it should be one of {list(SALE_STATUS_CODE.values())}"
+                    }, 404
+        if order_status not in SALE_STATUS_CLOSE:
+            return {"status": False,
+                    "error_code": "SALE_STATUS_INVALID",
+                    "message": f"To close the sale, status should be one of {SALE_STATUS_CLOSE}"
                     }, 404
         # order of the current customer
         customer_order = CustomerOrderModel.find_by_id(order_id)
@@ -132,20 +148,23 @@ class Order(Resource):
                 "error_code": "INVALID_ORDER",
                 "message": "no such order exists"
             }, 404
-        return_status = False
-        message = "Unable to update status of order"
-        # update quantity in db
+        # status = NOT_PAID
+        if order_status == SALE_STATUS_CODE["NOT_PAID"]:
+            customer_order.status = order_status
+            customer_order.save_to_db()
+            return {"status": True, "message": "order status updated successfully"}, 200
+        # status = (PAID or PARTIAL_PAID)
+        # 1. update quantity in db
         update_status = OrderHelper.update_inventory(customer_order)
         print("update status", update_status)
         if update_status:
-            return_status = True
-            message = "order status updated successfully"
+            # 2. Update status in db
             customer_order.status = order_status
             customer_order.save_to_db()
-            return {"status": return_status, "message": message}, 200
+            return {"status": True, "message": "order status updated successfully"}, 200
         return {
-            "status": return_status,
-            "error_code": "",
-            "message": "cant update the quantity in inventory",
+            "status": False,
+            "error_code": "DB_INSERTION_ERROR",
+            "message": "cant update the quantity in inventory, after payment",
         }
 

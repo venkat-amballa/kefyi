@@ -5,6 +5,7 @@
     
     4xx - Bad Request
     400 - Missing required field, client side bad request
+    401 - 
     404 - Resource Not Found
 
     5xx - Issue in processing 

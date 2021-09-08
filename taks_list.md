@@ -116,3 +116,11 @@ set DATABASE_STAGE_URL=postgres://bangfcwl:g2LeY0rRYdSougo5S6YBUvNqevu2c3E3@dumb
 set DATABASE_URL=postgres://bkfsjolrjonwbh:b14284e4edf8faad5ca9d9692ee5efb2f2a0ddef72ecc9f48ae808b0b842140a@ec2-176-34-105-15.eu-west-1.compute.amazonaws.com:5432/d9oie576iqt1es
 
 postgres://user:password@host:port/database
+
+
+Breaking Changes:
+- POST /customer/register => POST /customer 
+
+1. customer search endpoint:
+   - /customer?id=<id>&mobile=<mobile>
+	

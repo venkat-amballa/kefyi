@@ -36,19 +36,17 @@ class StoreProduct(Resource):
     def get(self, s_id, p_id):
         # store = StoreModel.query.filter(StoreModel.id == s_id).filter(StoreModel.products.any(id=p_id)).first()
         user_id = get_jwt_identity()
-        product = ProductModel.find_in_user_store(user_id, s_id, p_id)
+        product = ProductModel.find_in_user_store_by_barcode_or_id(user_id, s_id, p_id)
         if not product:
             return {
                 "status": False,
                 "store_id": s_id,
-                "product_id": p_id,
+                "_id": p_id,
                 "error_code": ERROR_CODES["PRODUCT_NOT_FOUND"],
                 "message": ERROR_MSG["PRODUCT_NOT_FOUND"],
             }, 200
         return {
             "status": True,
-            "store_id": s_id,
-            "product_id": p_id,
             "product": product.json(),
         }, 200
 
@@ -152,6 +150,7 @@ class StoreProducts(Resource):
                 wholesale_price=data.get("wholesale_price"),
                 retail_price=data.get("retail_price"),
                 quantity=data.get("quantity"),
+                barcode=data.get("barcode", None)
             )
         except Exception as e:
             print(e)

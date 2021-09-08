@@ -49,17 +49,25 @@ class OrderHelper:
             # TODO -    Given id is not found the table
             # DONE -    below => it will be saved as none in self.actual_products_list,
             #           based on that we send a message
-            if prod_obj and prod_obj.quantity >= quantity:
+            product_invalid_msg = "No such product exist in your store"
+            quantity_invalid_msg = "Quantity requested is not available"
+            price_invalid_msg = "Price mentioned is invalid"
+
+            if prod_obj and prod_obj.quantity >= quantity and \
+                    (prod_dict["ordered_price"] is None or prod_dict["ordered_price"] > 0):
                 status = True
                 item = {"status": status, "id": prod_obj.id}
             else:
                 item = {
                     "status": status,
                     "id": self.order_items[_i].get("id"),
-                    "message": "Quantity requested is not available",
                 }
                 if prod_obj is None:
-                    item["message"] = "No such item exist in your store"
+                    item["message"]: product_invalid_msg
+                elif prod_dict.get("ordered_price") <= 0:
+                    item["message"] = price_invalid_msg
+                else:
+                    item["message"] = quantity_invalid_msg
 
             # Whenever, the status is false it means the product or quantity given is invalid.
             order_valid &= status
@@ -82,22 +90,28 @@ class OrderHelper:
                 ordered_price = _dict_obj["ordered_price"]
                 # Calculating order amount based on sale type for each product
 
-                if ordered_price or sale_type == SALE_TYPES[2]:  # custom
-                    raise Exception("handle custom price")
-                    order_amount += (
-                            ordered_quantity * ordered_price
-                    )  # TODO - custom price, not implemented
-                    billing_price = ordered_price
-                elif sale_type == SALE_TYPES[0]:  # retail
-                    order_amount += ordered_quantity * actual_product.retail_price
-                    billing_price = actual_product.retail_price
+                # if ordered_price or sale_type == SALE_TYPES[2]:  # custom
+                #     raise Exception("handle custom price")
+                #     order_amount += (
+                #             ordered_quantity * ordered_price
+                #     )  # TODO - custom price, not implemented
+                #     billing_price = ordered_price
+                # el
+                if sale_type == SALE_TYPES[0]:  # retail
+                    if ordered_price:
+                        order_amount += ordered_quantity * ordered_price
+                        billing_price = ordered_price
+                    else:
+                        order_amount += ordered_quantity * actual_product.retail_price
+                        billing_price = actual_product.retail_price
 
                 elif sale_type == SALE_TYPES[1]:  # wholesale
-                    order_amount += ordered_quantity * actual_product.wholesale_price
-                    billing_price = actual_product.wholesale_price
-
-
-
+                    if ordered_price:
+                        order_amount += ordered_quantity * ordered_price
+                        billing_price = ordered_price
+                    else:
+                        order_amount += ordered_quantity * actual_product.wholesale_price
+                        billing_price = actual_product.wholesale_price
                 order_list.append(
                     {
                         "price": billing_price,

@@ -1,6 +1,7 @@
 from db import db
 from utils import date_format
 
+
 class CustomerModel(db.Model):
     """
     Customer Model, This custmer buys products from a store
@@ -15,19 +16,19 @@ class CustomerModel(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     # username =  db.Column(db.String(80)) # nullable=False, unique=True
-    first_name = db.Column(db.String(80), nullable=False)
+    first_name = db.Column(db.String(80))
     last_name = db.Column(db.String(80))
     # password = db.Column(db.String(80)) # nullable=False
     address = db.Column(db.String(200))
     email = db.Column(db.String(80))
-    mobile = db.Column(db.String(20), nullable=False)
+    mobile = db.Column(db.String(20), nullable=False, unique=True)
 
     created_on = db.Column(db.DateTime, server_default=db.func.now())
     updated_on = db.Column(db.DateTime, server_default=db.func.now(), onupdate=db.func.now())
 
     bills = db.relationship("CustomerOrderModel", back_populates="customer")
 
-    def __init__(self, first_name, last_name, address, email, mobile):
+    def __init__(self, mobile, first_name=None, last_name=None, address=None, email=None):
         self.first_name = first_name
         self.last_name = last_name
         self.address = address
@@ -55,7 +56,8 @@ class CustomerModel(db.Model):
 
     @classmethod
     def orders(cls, _cid):
-        return cls.query.filter_by(id=_cid).first().bills
+        return cls.query.filter_by(id=_cid).scalar().bills
+        # return cls.query.filter_by(mobile_no=mobile_no).scalar().bills
 
     @classmethod
     def find_by_id(cls, _id):

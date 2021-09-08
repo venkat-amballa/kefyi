@@ -24,23 +24,72 @@ class Customer(Resource):
     )
 
     def post(self):
-        data = Customer.parser.parse_args()
-        if data:
-            try:
-                if CustomerModel.find_by_email(data["email"]):
-                    return {"status": True, "message": "Registered already"}, 400
-                customer = CustomerModel(**data)
-                customer.save_to_db()
-            except Exception as e:
-                print(e)
-                return {
-                    "status": False,
-                    "message": "DB ERROR, inserting into customer table failed",
-                }, 500
+        # data = Customer.parser.parse_args()
+        data = request.get_json()
+        mobile = data.get("mobile", None)
+        if mobile is None:
+            return {"status": False,
+                    "error_code": "REQUIRED_FIELD",
+                    "message": "mobile number is a required field"
+                    }, 400
+        # TODO - use marshmallow to check the data validity
+        try:
+            if CustomerModel.find_by_mobile(data["mobile"]):
+                return {"status": False,
+                        "error_code": "DUPLICATE_USER",
+                        "message": "Registered already, kindly update details if needed"
+                        }, 400
+            customer = CustomerModel(**data)
+            customer.save_to_db()
             return {"status": True, "message": "Registered Successfully!"}, 200
 
-        return {"status": False, "message": "Invalid Request"}, 400
+        except Exception as e:
+            print(e)
+            return {
+                "status": False,
+                "message": "DB ERROR, inserting into customer table failed",
+            }, 500
 
     def get(self):
-        # data = request.
-        return {"status": False, "message": "Not implemented, yet..!"}, 500
+        args = request.args
+        mobile = args.get("mobile", None)
+        cid = args.get("id", None)
+
+        if mobile:
+            customer = CustomerModel.find_by_mobile(mobile)
+        elif cid:
+            customer = CustomerModel.find_by_id(cid)
+        else:
+            return {"status": False,
+                    "error_code": "MISSING_QUERY_PARAMS",
+                    "message": "customer id or mobile needs to be passed as query params",
+                    }, 400
+        if customer:
+            return {"status": True, "customer": customer.json()}, 200
+
+        return {"status": False,
+                "error_code": "INVALID_ID_OR_MOBILE",
+                "message": "No customer with the id or mobile"
+                }, 404
+
+    def put(self):
+        args = request.args
+        mobile = args.get("mobile", None)
+        cid = args.get("id", None)
+
+        if mobile:
+            customer = CustomerModel.find_by_mobile(mobile)
+        elif cid:
+            customer = CustomerModel.find_by_id(cid)
+        else:
+            return {"status": False,
+                    "error_code": "MISSING_QUERY_PARAMS",
+                    "message": "customer id or mobile needs to be passed as query params",
+                    }, 400
+        if customer:
+            return {"status": True, "customer": customer.json()}, 200
+
+        return {"status": False,
+                "error_code": "INVALID_ID_OR_MOBILE",
+                "message": "No customer with the id or mobile"
+                }, 404

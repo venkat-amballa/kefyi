@@ -59,6 +59,11 @@ class OrderRefund(Resource):
                     "error_code": "INVALID_ORDER",
                     "message": "no such order exists"
                     }, 404
+        if order.status == SALE_STATUS_CODE["REFUND"]:
+            return {"status": False,
+                    "error_code": "ORDER_STATUS_REFUND",
+                    "message": "Order is refunded already, cant refund twice"
+                    }, 400
         if order.status != SALE_STATUS_CODE["PAID"]:
             return {"status": False,
                     "error_code": "ORDER_STATUS_NOT_PAID",
@@ -106,6 +111,9 @@ class OrderRefund(Resource):
                 a.product = product
                 refund.return_items.append(a)
                 product.save_to_db()
+            # update the status of the order to refund
+            order.status = SALE_STATUS_CODE['REFUND']
+            order.save_to_db()
             refund.save_to_db()
         except Exception as e:
             print(e)

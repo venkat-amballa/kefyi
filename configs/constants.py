@@ -4,11 +4,16 @@ TOKEN_EXPIRES = datetime.timedelta(hours=8)
 
 SALE_STATUS_CODE = {
     "PAID": "PAID",
-    "PENDING": "PENDING",
-    "NOT_PAID": "NOT_PAID",
     "PARTIAL_PAID": "PARTIAL_PAID",
     "REFUND": "REFUND",
-   }
+    "PENDING": "PENDING",
+    "NOT_PAID": "NOT_PAID",
+}
+
+SALE_STATUS_CLOSE = (SALE_STATUS_CODE['PAID'],
+                     SALE_STATUS_CODE['PARTIAL_PAID'],
+                     SALE_STATUS_CODE['NOT_PAID'],
+                     )
 
 SALE_STATUS = list(SALE_STATUS_CODE.values())
 

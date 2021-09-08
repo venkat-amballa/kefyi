@@ -27,6 +27,7 @@ class ProductModel(db.Model):
     retail_price = db.Column(db.Float(precision=3), nullable=False)
     quantity = db.Column(db.Integer, nullable=False)
 
+    barcode = db.Column(db.String)
     brand = db.Column(db.String(100))
     enable = db.Column(db.Boolean(), server_default='True')
     # store -> reference from StoreModel
@@ -49,7 +50,7 @@ class ProductModel(db.Model):
     # price = db.Column(db.Float(precision=2))
     # price = db.Column(db.Float(precision=2))
 
-    def __init__(self, name, url, category, description, unit, actual_price, wholesale_price, retail_price, quantity, brand):
+    def __init__(self, name, url, category, description, unit, actual_price, wholesale_price, retail_price, quantity, brand, barcode):
         self.name = name
         self.url = url
         self.category = category
@@ -60,11 +61,12 @@ class ProductModel(db.Model):
         self.retail_price = retail_price
         self.quantity = quantity
         self.brand = brand
-
+        self.barcode = barcode
 
     def json(self):
         return {
             "id": self.id,
+            "barcode": self.barcode,
             "name": self.name,
             "url": self.url,
             "category": self.category,
@@ -83,6 +85,7 @@ class ProductModel(db.Model):
     def order_json(self):
         return {
             "id": self.id,
+            "barcode": self.barcode,
             "name": self.name,
             "url": self.url,
             "category": self.category,
@@ -115,6 +118,13 @@ class ProductModel(db.Model):
         Find the given product id, in the db
         """
         return cls._base_query(_uid, _sid).filter_by(id=_pid).scalar()
+
+    @classmethod
+    def find_in_user_store_by_barcode_or_id(cls, _uid, _sid, _id_or_barcode):
+        """
+        Find the given product id, in the db
+        """
+        return cls._base_query(_uid, _sid).filter(db.or_(cls.id == _id_or_barcode, cls.barcode == str(_id_or_barcode))).scalar()
 
     @classmethod
     def find_in_user_store(cls, _uid, _sid, _pid):

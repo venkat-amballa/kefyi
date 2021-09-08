@@ -3,6 +3,7 @@ from db import db
 # from models.secondary_tables import products_bill
 from utils import date_format
 
+
 class ProductModel(db.Model):
     """
     Product Class, Behaves like a Record in db.
@@ -110,7 +111,8 @@ class ProductModel(db.Model):
         #     )
         # cls.query.filter(cls.name.like("%" + name + "%")).all()
         # TODO - one can use contains
-        return cls._base_query(_uid, _sid).filter_by(cls.name.like(name)).all()
+        # .filter(cls.name.like(name)).all()
+        return cls._base_query(_uid, _sid).filter(cls.name.like("%" + name + "%")).all()
 
     @classmethod
     def find_by_id(cls, _uid, _sid, _pid):

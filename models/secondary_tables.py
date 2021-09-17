@@ -2,8 +2,8 @@ from db import db
 
 store_product = db.Table(
     "store_product",
-    db.Column("store_id", db.Integer, db.ForeignKey("stores.id"), primary_key=True),
-    db.Column("product_id", db.Integer, db.ForeignKey("products.id"), primary_key=True),
+    db.Column("store_id", db.Integer, db.ForeignKey("stores.sid"), primary_key=True),
+    db.Column("product_id", db.Integer, db.ForeignKey("products.pid"), primary_key=True),
 )
 
 
@@ -14,10 +14,10 @@ store_product = db.Table(
 
 
 class ProductOrdersAssociation(db.Model):
-    product_id = db.Column(db.Integer, db.ForeignKey("products.id"), primary_key=True)
+    product_id = db.Column(db.Integer, db.ForeignKey("products.pid"), primary_key=True)
     order_id = db.Column(db.Integer, db.ForeignKey("orders.id"), primary_key=True)
     price = db.Column(db.Float(precision=2), nullable=False)
-    quantity = db.Column(db.Integer, nullable=False)
+    quantity = db.Column(db.Float, nullable=False)
     product = db.relationship("ProductModel")
 
     # def __init__(self, product_id, order_id, pricec, quantity):
@@ -31,8 +31,8 @@ class ProductOrdersAssociation(db.Model):
 
 
 class ProductRefundAssociation(db.Model):
-    product_id = db.Column(db.Integer, db.ForeignKey("products.id"), primary_key=True)
+    product_id = db.Column(db.Integer, db.ForeignKey("products.pid"), primary_key=True)
     refund_id = db.Column(db.Integer, db.ForeignKey("refunds.id"), primary_key=True)
     price = db.Column(db.Float(precision=2), nullable=False)
-    quantity = db.Column(db.Integer, nullable=False)
+    quantity = db.Column(db.Float, nullable=False)
     product = db.relationship("ProductModel")

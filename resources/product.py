@@ -44,21 +44,21 @@ class ProductList(Resource):
 
 class ProductItem(Resource):
     @jwt_required()
-    def get(self, id):
+    def get(self, pid):
         # find by id
         user_id = get_jwt_identity()
-        product = ProductModel.find_by_barcode_or_id(id)
+        product = ProductModel.find_by_barcode_or_id(pid)
         if product:
             return product.json(), 200
         return {"message": "Product Not Found"}, 404
 
     @jwt_required(fresh=True)
-    def put(self, id):
+    def put(self, pid):
         # JWT required
         data = request.get_json()
         # NOTE-THIS
         # data = request.json
-        product = ProductModel.find_by_id(id)
+        product = ProductModel.find_by_id(pid)
         if product:
             product.name = data.get("name", product.name)
             product.actual_price = data.get("actual_price", product.actual_price)
@@ -90,12 +90,12 @@ class ProductItem(Resource):
         return {"status": True, "message": "Product update successfull"}, 200
 
     @jwt_required(fresh=True)
-    def delete(self, id):
+    def delete(self, pid):
         claims = get_jwt()
         if not claims["is_admin"]:
             return {"message": "Required admin privilages!!"}, 401
 
-        product = ProductModel.find_by_id(id)
+        product = ProductModel.find_by_id(pid)
         if product:
             product.delete_from_db()
             return {"status": True, "message": "Deleted Successfully"}, 200

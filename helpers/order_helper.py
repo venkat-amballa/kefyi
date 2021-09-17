@@ -56,7 +56,7 @@ class OrderHelper:
             if prod_obj and prod_obj.quantity >= quantity and \
                     (prod_dict["ordered_price"] is None or prod_dict["ordered_price"] > 0):
                 status = True
-                item = {"status": status, "id": prod_obj.id}
+                item = {"status": status, "id": prod_obj.pid}
             else:
                 item = {
                     "status": status,
@@ -78,10 +78,11 @@ class OrderHelper:
         return order_valid, response_list
 
     def calculate_order_amount(self, sale_type: str) -> tuple:
-        order_amount = 0
+        order_amount_ = 0
         # try:
         order_list = []
-        billing_price = None
+        billing_price_per_unit = None
+        order_amount=0
         try:
             for _dict_obj in self.actual_products_list:
                 # sale_type:["wholesale", "retail", "custom"]
@@ -99,22 +100,25 @@ class OrderHelper:
                 # el
                 if sale_type == SALE_TYPES[0]:  # retail
                     if ordered_price:
-                        order_amount += ordered_quantity * ordered_price
-                        billing_price = ordered_price
+                        order_amount_ = ordered_quantity * ordered_price
+                        billing_price_per_unit = ordered_price
                     else:
-                        order_amount += ordered_quantity * actual_product.retail_price
-                        billing_price = actual_product.retail_price
+                        order_amount_ = ordered_quantity * actual_product.retail_price
+                        billing_price_per_unit = actual_product.retail_price
 
                 elif sale_type == SALE_TYPES[1]:  # wholesale
                     if ordered_price:
-                        order_amount += ordered_quantity * ordered_price
-                        billing_price = ordered_price
+                        order_amount_ = ordered_quantity * ordered_price
+                        billing_price_per_unit = ordered_price
                     else:
-                        order_amount += ordered_quantity * actual_product.wholesale_price
-                        billing_price = actual_product.wholesale_price
+                        order_amount_ = ordered_quantity * actual_product.wholesale_price
+                        billing_price_per_unit = actual_product.wholesale_price
+                order_amount += order_amount_
                 order_list.append(
                     {
-                        "price": billing_price,
+                        "id": actual_product.pid,
+                        "price": order_amount_,
+                        "unit_price": billing_price_per_unit,
                         "product": actual_product,
                         "quantity": ordered_quantity,
                     }

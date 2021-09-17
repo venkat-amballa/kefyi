@@ -21,9 +21,9 @@ ERROR_MSGS = {
 
 class StoreOrders(Resource):
     @jwt_required()
-    def get(self, store_id):
+    def get(self, sid):
         user_id = get_jwt_identity()
-        orders = StoreModel.store_orders(user_id, store_id)
+        orders = StoreModel.store_orders(user_id, sid)
         if isinstance(orders, list):
             return {"status": True, "orders": [order.json() for order in orders]}, 200
         return {"status": False,
@@ -82,18 +82,18 @@ class StoreList(Resource):
 
 class Store(Resource):
     @jwt_required()
-    def get(self, id):
+    def get(self, sid):
         """
         GET method, to get the complete product list of a store.
         """
         user_id = get_jwt_identity()
-        store = StoreModel.find_by_id(user_id, id)
+        store = StoreModel.find_by_id(user_id, sid)
         if store:
             return store.json(), 200
         return {"status": False, "message": "Store Not Found"}, 404
 
-    def put(self, id):
+    def put(self, sid):
         return {"status": False, "message": "not implemented, put"}
 
-    def delete(self, id):
+    def delete(self, sid):
         return {"status": False, "message": "not implemented, delete"}

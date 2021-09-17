@@ -7,7 +7,7 @@ from flask_migrate import Migrate
 
 from db import db
 
-from resources.home import Home
+from resources.home import Home, Todo
 
 # from resources.product import Product, ProductList
 from resources.product import Product, ProductItem
@@ -42,8 +42,8 @@ api = Api(app)
 
 jwt = JWTManager(app)
 # Database Migrations
-db.init_app(app)
-migrate = Migrate(app, db)
+# db.init_app(app)
+# migrate = Migrate(app, db)
 
 if env == "DEV":
     @app.before_first_request
@@ -109,9 +109,10 @@ def revoked_token_callback(jwt_header, jwt_payload):
 
 
 api.add_resource(Home, "/")
+api.add_resource(Todo, '/todo/<string:todo_id>', endpoint='todo_ep')
 
 # api.add_resource(ProductList, "/all_products")
-api.add_resource(ProductItem, "/products/<int:id>")
+api.add_resource(ProductItem, "/products/<int:pid>")
 api.add_resource(Product, "/products")
 api.add_resource(Categories, "/categories")
 
@@ -131,12 +132,12 @@ api.add_resource(UserLogout, "/user/logout")
 api.add_resource(TokenRefresh, "/refresh")
 
 api.add_resource(StoreList, "/stores")
-api.add_resource(Store, "/stores/<int:id>")
+api.add_resource(Store, "/stores/<int:sid>")
 
-api.add_resource(StoreProduct, "/store/<int:s_id>/product/<int:p_id>")
-api.add_resource(StoreProducts, "/store/<int:s_id>/products")
-api.add_resource(StoreOrders, "/store/<int:store_id>/orders")
+api.add_resource(StoreProduct, "/store/<int:sid>/product/<int:pid>")
+api.add_resource(StoreProducts, "/store/<int:sid>/products")
+api.add_resource(StoreOrders, "/store/<int:sid>/orders")
 
 if __name__ == "__main__":
-    # db.init_app(app)
+    db.init_app(app)
     app.run(port=5000)

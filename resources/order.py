@@ -107,14 +107,21 @@ class Order(Resource):
                 for order_item in order_list:
                     # create parent, append a child via association
                     a = ProductOrdersAssociation(
-                        price=order_item["price"], quantity=order_item["quantity"]
+                        price=order_item["unit_price"], quantity=order_item["quantity"]
                     )
                     a.product = order_item["product"]
                     p.products.append(a)
+                order_response = [
+                    {
+                        "id": order_item["id"],
+                        "gross_price": order_item["price"],
+                        "unit_price": order_item["unit_price"],
+                        "quantity": order_item["quantity"],
+                    } for order_item in order_list]
 
                 p.save_to_db()
                 status = True
-                return {"status": status, "order_id": p.id, "amount": order_amount}, 200
+                return {"status": status, "order_id": p.id, "amount": order_amount, "order_items": order_response}, 200
             except Exception as error:
                 print(error)
                 return DB_INSERT_ERROR["RESPONSE"], DB_INSERT_ERROR["STATUS_CODE"]

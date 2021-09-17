@@ -33,15 +33,15 @@ ERROR_MSG = {
 
 class StoreProduct(Resource):
     @jwt_required()
-    def get(self, s_id, p_id):
+    def get(self, sid, pid):
         # store = StoreModel.query.filter(StoreModel.id == s_id).filter(StoreModel.products.any(id=p_id)).first()
         user_id = get_jwt_identity()
-        product = ProductModel.find_in_user_store_by_barcode_or_id(user_id, s_id, p_id)
+        product = ProductModel.find_in_user_store_by_barcode_or_id(user_id, sid, pid)
         if not product:
             return {
                 "status": False,
-                "store_id": s_id,
-                "_id": p_id,
+                "store_id": sid,
+                "_id": pid,
                 "error_code": ERROR_CODES["PRODUCT_NOT_FOUND"],
                 "message": ERROR_MSG["PRODUCT_NOT_FOUND"],
             }, 200
@@ -51,11 +51,11 @@ class StoreProduct(Resource):
         }, 200
 
     @jwt_required(fresh=True)
-    def put(self, s_id, p_id):
+    def put(self, sid, pid):
         # JWT required
         data = request.get_json()
         user_id = get_jwt_identity()
-        product = ProductModel.find_in_user_store(user_id, s_id, p_id)
+        product = ProductModel.find_in_user_store(user_id, sid, pid)
         if not product:
             return {
                 "status": False,
@@ -75,7 +75,8 @@ class StoreProduct(Resource):
             product.retail_price = data.get("retail_price", product.retail_price)
             product.quantity += data.get("quantity", product.quantity)
             product.category = data.get("category", product.category)
-
+            product.loose = data.get("loose", product.loose)
+            product.enable = data.get("enable", product.enable)
             product.save_to_db()
             return {"status": True, "product": product.json()}, 200
         except (SQLAlchemyError, DBAPIError) as e:
@@ -87,37 +88,37 @@ class StoreProduct(Resource):
             }, 400
 
 
-
 class StoreProducts(Resource):
     @jwt_required()
-    def get(self, s_id):
+    def get(self, sid):
         """get store products"""
         user_id = get_jwt_identity()
         product_name_search = request.args.get("name", None)
         if product_name_search:
-            similar_products = ProductModel.find_similar(user_id, s_id, product_name_search)
+            similar_products = ProductModel.find_similar(user_id, sid, product_name_search)
             return {
                 "status": True,
                 "products": [prod.json() for prod in similar_products]
             }
 
-        store = StoreModel.find_by_id(user_id, s_id)
+        store = StoreModel.find_by_id(user_id, sid)
+
         if not store:
-            return {"status": False, "store_id": s_id,
+            return {"status": False, "store_id": sid,
                     "error_code": ERROR_CODES["INVALID_STORE"],
                     "message": ERROR_MSG["INVALID_STORE"],
                     }, 200
-        products = StoreModel.store_products(user_id, s_id)
+        products = StoreModel.store_products(user_id, sid)
         if isinstance(products, list):
             product_list = [p.json() for p in products]
-            return {"status": True, "store_id": s_id, "products": product_list}, 200
-        return {"status": False, "store_id": s_id,
+            return {"status": True, "store_id": sid, "products": product_list}, 200
+        return {"status": False, "store_id": sid,
                 "error_code": ERROR_CODES["EMPTY_STORE"],
                 "message": ERROR_MSG["EMPTY_STORE"],
                 }, 200
 
     @jwt_required()
-    def post(self, s_id):
+    def post(self, sid):
         # TODO:
         # Find whether the user has access to this store, only allow if he does.
         data = request.get_json()
@@ -132,7 +133,7 @@ class StoreProducts(Resource):
             }, 400
 
         # check the user access to the store.
-        store = StoreModel.find_by_id(user_id, s_id)
+        store = StoreModel.find_by_id(user_id, sid)
         if not store:
             return {
                 "status": False,
@@ -140,7 +141,7 @@ class StoreProducts(Resource):
                 "message": ERROR_MSG["INVALID_STORE"],
             }, 400
 
-        if ProductModel.find_by_name(user_id, s_id, name):
+        if ProductModel.find_by_name(user_id, sid, name):
             return {
                 "status": False,
                 "error_code": ERROR_CODES["PRODUCT_NAME_DUPLICATE"],
@@ -158,7 +159,10 @@ class StoreProducts(Resource):
                 wholesale_price=data.get("wholesale_price"),
                 retail_price=data.get("retail_price"),
                 quantity=data.get("quantity"),
-                barcode=data.get("barcode", None)
+                barcode=data.get("barcode", None),
+                loose=data.get("loose", False),
+                enable=data.get("enable", True),
+                sid=sid,
             )
         except Exception as e:
             print(e)

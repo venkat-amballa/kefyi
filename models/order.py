@@ -23,7 +23,7 @@ class CustomerOrderModel(db.Model):
     customer_id = db.Column(db.Integer, db.ForeignKey("customers.id"))
     customer = db.relationship("CustomerModel", back_populates="bills")
     # stores(parent)
-    store_id = db.Column(db.Integer, db.ForeignKey("stores.id"))
+    store_id = db.Column(db.Integer, db.ForeignKey("stores.sid"))
     store = db.relationship('StoreModel', back_populates="orders")
     # wholesale, retail, custom
     sale_type = db.Column(db.String(20), nullable=False)

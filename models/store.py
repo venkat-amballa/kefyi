@@ -7,7 +7,7 @@ class StoreModel(db.Model):
 
     __tablename__ = "stores"
 
-    id = db.Column(db.Integer, primary_key=True)
+    sid = db.Column(db.Integer, primary_key=True)
     # partner_id
     name = db.Column(db.String(100))
     address = db.Column(db.String(150))
@@ -53,14 +53,14 @@ class StoreModel(db.Model):
     @classmethod
     def store_products(cls, _uid, _sid):
         """All products of a store"""
-        res = cls.query.filter_by(user_id=_uid, id=_sid).first()
+        res = cls.query.filter_by(user_id=_uid, sid=_sid).first()
         if res:
             return res.products
         return res
 
     @classmethod
     def store_orders(cls, _uid, _sid):
-        res = cls.query.filter_by(user_id=_uid, id=_sid).first()
+        res = cls.query.filter_by(user_id=_uid, sid=_sid).first()
         if res:
             return res.orders
         return res
@@ -68,7 +68,7 @@ class StoreModel(db.Model):
     @classmethod
     def find_by_id(cls, _uid, _id):
         """ Find store_id for the given user"""
-        return cls.query.filter_by(user_id=_uid, id=_id).first()
+        return cls.query.filter_by(user_id=_uid, sid=_id).first()
 
     @classmethod
     def find_by_user_id(cls, _uid):
@@ -87,7 +87,7 @@ class StoreModel(db.Model):
 
     def json(self):
         return {
-            "id": self.id,
+            "id": self.sid,
             "name": self.name,
             "address": self.address,
             "contact": self.contact,

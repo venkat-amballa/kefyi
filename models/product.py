@@ -13,7 +13,7 @@ class ProductModel(db.Model):
 
     __tablename__ = "products"
 
-    id = db.Column(db.Integer, primary_key=True)
+    pid = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(200), nullable=False)
     url = db.Column(db.String(300))
     description = db.Column(db.String(500))
@@ -26,13 +26,16 @@ class ProductModel(db.Model):
     actual_price = db.Column(db.Float(precision=3), nullable=False)
     wholesale_price = db.Column(db.Float(precision=3), nullable=False)
     retail_price = db.Column(db.Float(precision=3), nullable=False)
-    quantity = db.Column(db.Integer, nullable=False)
+    quantity = db.Column(db.Float, nullable=False)
 
     barcode = db.Column(db.String)
     brand = db.Column(db.String(100))
     enable = db.Column(db.Boolean(), server_default='True')
+    loose = db.Column(db.Boolean(), nullable=False)
     # store -> reference from StoreModel
-
+    sid = db.Column(
+        db.Integer, db.ForeignKey("stores.sid"), nullable=False
+    )  # foreign key
     # bills_in = db.relationship('CustomerOrderModel', secondary=products_bill, back_populates="products")
     # brand_name =
     # create_by =
@@ -51,7 +54,8 @@ class ProductModel(db.Model):
     # price = db.Column(db.Float(precision=2))
     # price = db.Column(db.Float(precision=2))
 
-    def __init__(self, name, url, category, description, unit, actual_price, wholesale_price, retail_price, quantity, brand, barcode):
+    def __init__(self, name, url, category, description, unit, actual_price, wholesale_price, retail_price, quantity,
+                 brand, barcode, enable, loose, sid):
         self.name = name
         self.url = url
         self.category = category
@@ -63,10 +67,14 @@ class ProductModel(db.Model):
         self.quantity = quantity
         self.brand = brand
         self.barcode = barcode
+        self.enable = enable
+        self.loose = loose
+
+        self.sid = sid
 
     def json(self):
         return {
-            "id": self.id,
+            "id": self.pid,
             "barcode": self.barcode,
             "name": self.name,
             "url": self.url,
@@ -81,11 +89,14 @@ class ProductModel(db.Model):
             "created_on": date_format(self.created_on),
             "updated_on": date_format(self.updated_on),
             "enable": self.enable,
+            "loose": self.loose,
+            "store_id": self.sid,
         }
 
     def order_json(self):
         return {
-            "id": self.id,
+            "id": self.pid,
+            "store_id": self.sid,
             "barcode": self.barcode,
             "name": self.name,
             "url": self.url,
@@ -98,7 +109,7 @@ class ProductModel(db.Model):
         """
         Base query for Product Model class, to make sure we search in only in user allowed stores.
         """
-        return cls.query.filter(cls.store.any(user_id=_uid, id=_sid))
+        return cls.query.filter(cls.store.any(user_id=_uid, sid=_sid))
 
     @classmethod
     def find_similar(cls, _uid, _sid, name):
@@ -119,14 +130,14 @@ class ProductModel(db.Model):
         """
         Find the given product id, in the db
         """
-        return cls._base_query(_uid, _sid).filter_by(id=_pid).scalar()
+        return cls._base_query(_uid, _sid).filter_by(pid=_pid).scalar()
 
     @classmethod
-    def find_in_user_store_by_barcode_or_id(cls, _uid, _sid, _id_or_barcode):
+    def find_in_user_store_by_barcode_or_id(cls, _uid, _sid, _pid_or_barcode):
         """
         Find the given product id, in the db
         """
-        return cls._base_query(_uid, _sid).filter(db.or_(cls.id == _id_or_barcode, cls.barcode == str(_id_or_barcode))).scalar()
+        return cls._base_query(_uid, _sid).filter(db.or_(cls.pid == _pid_or_barcode, cls.barcode == str(_pid_or_barcode))).scalar()
 
     @classmethod
     def find_in_user_store(cls, _uid, _sid, _pid):
@@ -134,7 +145,7 @@ class ProductModel(db.Model):
         Find the product from a particular user store
         """
         # cls.query.filter(cls.store.any(id=_sid)).filter(cls.id == _pid).first()
-        return cls._base_query(_uid, _sid).filter_by(id=_pid).scalar()
+        return cls._base_query(_uid, _sid).filter_by(pid=_pid).scalar()
 
     @classmethod
     def find_by_name(cls, _uid, _sid, name):

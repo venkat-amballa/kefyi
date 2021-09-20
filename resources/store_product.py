@@ -77,6 +77,7 @@ class StoreProduct(Resource):
             product.category = data.get("category", product.category)
             product.loose = data.get("loose", product.loose)
             product.enable = data.get("enable", product.enable)
+            product.barcode = data.get("barcode", product.barcode)
             product.save_to_db()
             return {"status": True, "product": product.json()}, 200
         except (SQLAlchemyError, DBAPIError) as e:

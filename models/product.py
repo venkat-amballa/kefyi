@@ -123,7 +123,7 @@ class ProductModel(db.Model):
         # cls.query.filter(cls.name.like("%" + name + "%")).all()
         # TODO - one can use contains
         # .filter(cls.name.like(name)).all()
-        return cls._base_query(_uid, _sid).filter(cls.name.like("%" + name + "%")).all()
+        return cls._base_query(_uid, _sid).filter(cls.name.ilike("%"+name+"%")).all()
 
     @classmethod
     def find_by_id(cls, _uid, _sid, _pid):

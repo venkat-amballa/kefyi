@@ -28,6 +28,9 @@ class ProductModel(db.Model):
     retail_price = db.Column(db.Float(precision=3), nullable=False)
     quantity = db.Column(db.Float, nullable=False)
 
+    group = db.Column(db.Integer)
+    variant_id = db.Column(db.Integer)
+
     barcode = db.Column(db.String)
     brand = db.Column(db.String(100))
     enable = db.Column(db.Boolean(), server_default='True')

@@ -73,7 +73,7 @@ class StoreProduct(Resource):
                 "wholesale_price", product.wholesale_price
             )
             product.retail_price = data.get("retail_price", product.retail_price)
-            product.quantity += data.get("quantity", product.quantity)
+            product.quantity = data.get("quantity", product.quantity)
             product.category = data.get("category", product.category)
             product.loose = data.get("loose", product.loose)
             product.enable = data.get("enable", product.enable)

@@ -106,10 +106,13 @@ class Order(Resource):
                 )
                 for order_item in order_list:
                     # create parent, append a child via association
+                    cur_prod = order_item["product"]
                     a = ProductOrdersAssociation(
-                        price=order_item["unit_price"], quantity=order_item["quantity"]
+                        price=order_item["unit_price"],
+                        quantity=order_item["quantity"],
+                        actual_price=cur_prod.actual_price,
                     )
-                    a.product = order_item["product"]
+                    a.product = cur_prod
                     p.products.append(a)
                 order_response = [
                     {

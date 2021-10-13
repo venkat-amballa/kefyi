@@ -42,8 +42,8 @@ api = Api(app)
 
 jwt = JWTManager(app)
 # Database Migrations
-# db.init_app(app)
-# migrate = Migrate(app, db)
+db.init_app(app)
+migrate = Migrate(app, db)
 
 if env == "DEV":
     @app.before_first_request
@@ -139,5 +139,5 @@ api.add_resource(StoreProducts, "/store/<int:sid>/products")
 api.add_resource(StoreOrders, "/store/<int:sid>/orders")
 
 if __name__ == "__main__":
-    db.init_app(app)
+    # db.init_app(app)
     app.run(port=5000)

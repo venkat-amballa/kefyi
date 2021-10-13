@@ -18,6 +18,7 @@ class ProductOrdersAssociation(db.Model):
     order_id = db.Column(db.Integer, db.ForeignKey("orders.id"), primary_key=True)
     price = db.Column(db.Float(precision=2), nullable=False)
     quantity = db.Column(db.Float, nullable=False)
+    actual_price = db.Column(db.Float, nullable=False)
     product = db.relationship("ProductModel")
 
     # def __init__(self, product_id, order_id, pricec, quantity):
@@ -27,6 +28,7 @@ class ProductOrdersAssociation(db.Model):
         ordered_item = self.product.order_json()
         ordered_item["order_quantity"] = self.quantity
         ordered_item["order_price"] = self.price
+        ordered_item["actual_price"] = self.actual_price
         return ordered_item
 
 

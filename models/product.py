@@ -2,7 +2,7 @@ from db import db
 
 # from models.secondary_tables import products_bill
 from utils import date_format
-
+import re
 
 class ProductModel(db.Model):
     """
@@ -76,6 +76,7 @@ class ProductModel(db.Model):
         self.sid = sid
 
     def json(self):
+
         return {
             "id": self.pid,
             "barcode": self.barcode,
@@ -97,11 +98,12 @@ class ProductModel(db.Model):
         }
 
     def order_json(self):
+        name_ = re.sub("[\x00-\x7F]", ' ', self.name).strip()
         return {
             "id": self.pid,
             "store_id": self.sid,
             "barcode": self.barcode,
-            "name": self.name,
+            "name": name_ if name_ else self.name,
             "url": self.url,
             "category": self.category,
             "unit": self.unit,

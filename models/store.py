@@ -1,4 +1,5 @@
 from db import db
+from models.product import ProductModel
 from models.secondary_tables import store_product
 from utils import date_format
 
@@ -54,6 +55,8 @@ class StoreModel(db.Model):
     def store_products(cls, _uid, _sid):
         """All products of a store"""
         res = cls.query.filter_by(user_id=_uid, sid=_sid).first()
+        items = ProductModel.query.join(StoreModel).filter(StoreModel.sid == _sid, StoreModel.user_id == _uid).order_by(
+            ProductModel.category.desc()).order_by(ProductModel.name.desc()).all()
         if res:
             return res.products
         return res

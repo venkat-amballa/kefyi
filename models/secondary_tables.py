@@ -15,7 +15,7 @@ store_product = db.Table(
 
 class ProductOrdersAssociation(db.Model):
     product_id = db.Column(db.Integer, db.ForeignKey("products.pid"), primary_key=True)
-    order_id = db.Column(db.Integer, db.ForeignKey("orders.id"), primary_key=True)
+    order_id = db.Column(db.Integer, db.ForeignKey("orders.id", ondelete='CASCADE'), primary_key=True)
     price = db.Column(db.Float(precision=2), nullable=False)
     quantity = db.Column(db.Float, nullable=False)
     actual_price = db.Column(db.Float, nullable=False)

@@ -26,7 +26,7 @@ class CustomerModel(db.Model):
     created_on = db.Column(db.DateTime, server_default=db.func.now())
     updated_on = db.Column(db.DateTime, server_default=db.func.now(), onupdate=db.func.now())
 
-    bills = db.relationship("CustomerOrderModel", back_populates="customer")
+    bills = db.relationship("CustomerOrderModel", back_populates="customer", passive_deletes=True)
 
     def __init__(self, mobile, first_name=None, last_name=None, address=None, email=None):
         self.first_name = first_name

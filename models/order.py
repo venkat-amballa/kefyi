@@ -20,7 +20,7 @@ class CustomerOrderModel(db.Model):
     updated_on = db.Column(db.DateTime,  server_default=db.func.now(), onupdate=db.func.now())
 
     # customer(parent)
-    customer_id = db.Column(db.Integer, db.ForeignKey("customers.id"))
+    customer_id = db.Column(db.Integer, db.ForeignKey("customers.id", ondelete="CASCADE"))
     customer = db.relationship("CustomerModel", back_populates="bills")
     # stores(parent)
     store_id = db.Column(db.Integer, db.ForeignKey("stores.sid"))
@@ -29,7 +29,7 @@ class CustomerOrderModel(db.Model):
     sale_type = db.Column(db.String(20), nullable=False)
     # product(child)
     # products = db.relationship('ProductModel', secondary=products_bill, back_populates="bills_in")
-    products = db.relationship('ProductOrdersAssociation') # association table `ProductOrdersAssociation` is referenced here instead of `ProductModel`
+    products = db.relationship('ProductOrdersAssociation', passive_deletes=True) # association table `ProductOrdersAssociation` is referenced here instead of `ProductModel`
     refunds = db.relationship('RefundsModel')
 
     status = db.Column(db.String(15), nullable=False)

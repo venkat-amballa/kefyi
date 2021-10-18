@@ -117,7 +117,7 @@ class ProductModel(db.Model):
         return cls.query.filter(cls.store.any(user_id=_uid, sid=_sid))
 
     @classmethod
-    def find_similar(cls, _uid, _sid, name):
+    def find_similar(cls, _uid, _sid, name, enable=None):
         """
         Find the given in the db
         """
@@ -128,7 +128,10 @@ class ProductModel(db.Model):
         # cls.query.filter(cls.name.like("%" + name + "%")).all()
         # TODO - one can use contains
         # .filter(cls.name.like(name)).all()
-        return cls._base_query(_uid, _sid).filter(cls.name.ilike("%"+name+"%")).filter(cls.enable).all()
+        res = cls._base_query(_uid, _sid).filter(cls.name.ilike("%"+name+"%"))
+        if enable:
+            res = res.filter(cls.enable)
+        return res.all()
 
     @classmethod
     def find_by_id(cls, _uid, _sid, _pid):

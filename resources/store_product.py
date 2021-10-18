@@ -95,8 +95,9 @@ class StoreProducts(Resource):
         """get store products"""
         user_id = get_jwt_identity()
         product_name_search = request.args.get("name", None)
+        enable = request.args.get("enable", None)
         if product_name_search:
-            similar_products = ProductModel.find_similar(user_id, sid, product_name_search)
+            similar_products = ProductModel.find_similar(user_id, sid, product_name_search, enable)
             return {
                 "status": True,
                 "products": [prod.json() for prod in similar_products]

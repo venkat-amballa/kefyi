@@ -26,4 +26,4 @@ class Categories(Resource):
             "aquaculture",
         ]
 
-        return {"categories": categories}
+        return {"categories": categories}, 200

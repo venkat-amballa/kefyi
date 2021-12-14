@@ -11,6 +11,7 @@ from resources.home import Home, Todo
 
 # from resources.product import Product, ProductList
 from resources.product import Product, ProductItem
+from resources.units import Units
 from resources.categories import Categories
 from resources.refund import OrderRefund
 from resources.user import UserRegister, UserLogin, User, TokenRefresh, UserLogout
@@ -115,6 +116,7 @@ api.add_resource(Todo, '/todo/<string:todo_id>', endpoint='todo_ep')
 api.add_resource(ProductItem, "/products/<int:pid>")
 api.add_resource(Product, "/products")
 api.add_resource(Categories, "/categories")
+api.add_resource(Units, "/units")
 
 api.add_resource(Order, "/order")
 api.add_resource(OrderData, "/order/<int:id>")

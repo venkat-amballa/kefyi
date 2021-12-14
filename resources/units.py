@@ -4,6 +4,7 @@ from flask_restful import Resource
 class Units(Resource):
     def get(self):
         units = [
+            "gm",
             "grams",
             "ml",
             "milli-liters"

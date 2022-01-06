@@ -130,7 +130,7 @@ class ProductModel(db.Model):
         # .filter(cls.name.like(name)).all()
         res = cls._base_query(_uid, _sid).filter(cls.name.ilike("%"+name+"%"))
         if enable:
-            res = res.filter(cls.enable==str_to_bool(enable))
+            res = res.filter(cls.enable==enable)
         return res.all()
 
     @classmethod

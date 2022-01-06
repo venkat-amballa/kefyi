@@ -10,6 +10,7 @@ from sqlalchemy.exc import SQLAlchemyError, DBAPIError
 
 from models.store import StoreModel
 
+from utils import str_to_bool
 
 ERROR_CODES = {
     "DB_INSERTION_ERROR": "DB_INSERTION_ERROR",
@@ -97,8 +98,8 @@ class StoreProducts(Resource):
         """get store products"""
         user_id = get_jwt_identity()
         product_name_search = request.args.get("name", None)
-        enable = request.args.get("enable", None)
-        enable = True
+        enable = str_to_bool(request.args.get("enable", None))
+
         if product_name_search:
             similar_products = ProductModel.find_similar(user_id, sid, product_name_search, enable)
             return {

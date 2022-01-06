@@ -10,6 +10,7 @@ from sqlalchemy.exc import SQLAlchemyError, DBAPIError
 
 from models.store import StoreModel
 
+
 ERROR_CODES = {
     "DB_INSERTION_ERROR": "DB_INSERTION_ERROR",
     "PRODUCT_NOT_FOUND": "PRODUCT_NOT_FOUND",
@@ -97,6 +98,7 @@ class StoreProducts(Resource):
         user_id = get_jwt_identity()
         product_name_search = request.args.get("name", None)
         enable = request.args.get("enable", None)
+        enable = True
         if product_name_search:
             similar_products = ProductModel.find_similar(user_id, sid, product_name_search, enable)
             return {
@@ -111,7 +113,7 @@ class StoreProducts(Resource):
                     "error_code": ERROR_CODES["INVALID_STORE"],
                     "message": ERROR_MSG["INVALID_STORE"],
                     }, 200
-        products = StoreModel.store_products(user_id, sid)
+        products = StoreModel.store_products(user_id, sid, enable)
         if isinstance(products, list):
             product_list = [p.json() for p in products]
             return {"status": True, "store_id": sid, "products": product_list}, 200

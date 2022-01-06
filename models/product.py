@@ -1,7 +1,7 @@
 from db import db
 
 # from models.secondary_tables import products_bill
-from utils import date_format
+from utils import date_format, str_to_bool
 import re
 
 class ProductModel(db.Model):
@@ -130,7 +130,7 @@ class ProductModel(db.Model):
         # .filter(cls.name.like(name)).all()
         res = cls._base_query(_uid, _sid).filter(cls.name.ilike("%"+name+"%"))
         if enable:
-            res = res.filter(cls.enable)
+            res = res.filter(cls.enable==str_to_bool(enable))
         return res.all()
 
     @classmethod

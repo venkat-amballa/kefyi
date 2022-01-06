@@ -1,7 +1,7 @@
 from db import db
 from models.product import ProductModel
 from models.secondary_tables import store_product
-from utils import date_format
+from utils import date_format, str_to_bool
 
 
 class StoreModel(db.Model):
@@ -52,10 +52,13 @@ class StoreModel(db.Model):
         db.session.commit()
 
     @classmethod
-    def store_products(cls, _uid, _sid):
+    def store_products(cls, _uid, _sid, enable=None):
         """All products of a store"""
         res = cls.query.filter_by(user_id=_uid, sid=_sid).first()
-        items = ProductModel.query.join(StoreModel).filter(StoreModel.sid == _sid, StoreModel.user_id == _uid).order_by(
+        items = ProductModel.query.join(StoreModel).filter(StoreModel.sid == _sid, StoreModel.user_id == _uid)
+        if enable:
+            items = items.filter(ProductModel.enable==str_to_bool(enable))
+        items = items.order_by(
             ProductModel.category.desc()).order_by(ProductModel.name.desc()).all()
         if res:
             return res.products

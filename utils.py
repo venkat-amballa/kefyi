@@ -20,3 +20,10 @@ def load_config(app, env):
 def date_format(date):
     return date.strftime(DATE_FORMAT_STR)
 
+
+def str_to_bool(val: str) -> bool:
+    if val is None:
+        return None
+    if str(val).lower() in ["true", '1', "yes"]:
+        return True
+    return False

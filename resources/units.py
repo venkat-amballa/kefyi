@@ -7,7 +7,7 @@ class Units(Resource):
             "gm",
             "grams",
             "ml",
-            "milli-liters"
+            "milli-liters",
             "kg",
             "kilogram",
             "pieces",

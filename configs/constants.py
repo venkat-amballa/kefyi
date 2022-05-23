@@ -20,3 +20,5 @@ SALE_STATUS = list(SALE_STATUS_CODE.values())
 SALE_TYPES = ["retail", "wholesale", "custom"]
 
 DATE_FORMAT_STR = "%Y/%m/%d, %H:%M:%S"
+
+MAX_PER_PAGE = 10

@@ -1,3 +1,5 @@
+import flask_sqlalchemy
+
 from configs import config
 from configs.constants import DATE_FORMAT_STR
 
@@ -27,3 +29,15 @@ def str_to_bool(val: str) -> bool:
     if str(val).lower() in ["true", '1', "yes"]:
         return True
     return False
+
+
+def page_footer_json(page_obj: flask_sqlalchemy.Pagination) -> dict:
+    return {
+        "misc": {
+        "has_next": page_obj.has_next,
+        "has_prev": page_obj.has_prev,
+        "page": page_obj.page,
+        "next_num": page_obj.next_num,
+        "pages": page_obj.pages,
+        }
+    }

@@ -1,12 +1,13 @@
 from datetime import datetime
 from db import db
 
+import flask_sqlalchemy
 from models.secondary_tables import ProductOrdersAssociation
 from utils import date_format
-from configs.constants import SALE_STATUS
+from configs.constants import SALE_STATUS, MAX_PER_PAGE
+
 
 class CustomerOrderModel(db.Model):
-
     __tablename__ = "orders"
     """
     Operations that billing db should support
@@ -17,7 +18,7 @@ class CustomerOrderModel(db.Model):
     amount = db.Column(db.Float(precision=3), nullable=False)
 
     created_on = db.Column(db.DateTime, server_default=db.func.now())
-    updated_on = db.Column(db.DateTime,  server_default=db.func.now(), onupdate=db.func.now())
+    updated_on = db.Column(db.DateTime, server_default=db.func.now(), onupdate=db.func.now())
 
     # customer(parent)
     customer_id = db.Column(db.Integer, db.ForeignKey("customers.id", ondelete="CASCADE"))
@@ -29,7 +30,8 @@ class CustomerOrderModel(db.Model):
     sale_type = db.Column(db.String(20), nullable=False)
     # product(child)
     # products = db.relationship('ProductModel', secondary=products_bill, back_populates="bills_in")
-    products = db.relationship('ProductOrdersAssociation', passive_deletes=True) # association table `ProductOrdersAssociation` is referenced here instead of `ProductModel`
+    products = db.relationship('ProductOrdersAssociation',
+                               passive_deletes=True)  # association table `ProductOrdersAssociation` is referenced here instead of `ProductModel`
     refunds = db.relationship('RefundsModel')
 
     status = db.Column(db.String(15), nullable=False)
@@ -51,7 +53,7 @@ class CustomerOrderModel(db.Model):
     def json(self):
         return {
             "order_id": self.id,
-            "customer_id": self.customer_id,
+            "customer": self.customer.json(),
             "store_id": self.store_id,
             "sale_type": self.sale_type,
             "status": self.status,
@@ -68,6 +70,16 @@ class CustomerOrderModel(db.Model):
 
     @classmethod
     def products_in_order(cls, _id, _pids):
-        return ProductOrdersAssociation.query.filter(ProductOrdersAssociation.order_id == _id)\
+        return ProductOrdersAssociation.query.filter(ProductOrdersAssociation.order_id == _id) \
             .filter(ProductOrdersAssociation.product_id.in_(_pids)).all()
         # return cls.query.filter(cls.id == _id).filter(cls.products.id.in_(_pids)).all()
+
+    @classmethod
+    def orders(cls, _sid, date_from=datetime.today(), date_till=datetime.today(),
+               page=1, per_page=None) -> flask_sqlalchemy.Pagination:
+        print("date_from", date_from, date_till)
+        orders = cls.query.filter(cls.store_id == _sid)\
+            .filter(cls.created_on.between(date_from, date_till))\
+            .order_by(cls.created_on.asc())\
+            .paginate(page=page, per_page=per_page, error_out=False, max_per_page=MAX_PER_PAGE)
+        return orders

@@ -1,3 +1,4 @@
+from configs.constants import MAX_PER_PAGE
 from db import db
 
 # from models.secondary_tables import products_bill
@@ -117,7 +118,7 @@ class ProductModel(db.Model):
         return cls.query.filter(cls.store.any(user_id=_uid, sid=_sid))
 
     @classmethod
-    def find_similar(cls, _uid, _sid, name, enable=None):
+    def find_similar(cls, _uid, _sid, name, page, per_page, enable=None):
         """
         Find the given in the db
         """
@@ -131,7 +132,8 @@ class ProductModel(db.Model):
         res = cls._base_query(_uid, _sid).filter(cls.name.ilike("%"+name+"%"))
         if enable:
             res = res.filter(cls.enable==enable)
-        return res.all()
+        res = res.paginate(page=page, per_page=per_page, error_out=False, max_per_page=MAX_PER_PAGE)
+        return res
 
     @classmethod
     def find_by_id(cls, _uid, _sid, _pid):

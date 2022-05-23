@@ -21,7 +21,7 @@ class OrderData(Resource):
         order = CustomerOrderModel.find_by_id(id)
         if order:
             return {"status": True, "order": order.json()}, 200
-        return {"status": False, "message": "No such order exists"}, 200
+        return {"status": False, "message": "No such order exists"}, 404
 
 
 class Order(Resource):

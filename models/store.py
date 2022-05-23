@@ -52,14 +52,18 @@ class StoreModel(db.Model):
         db.session.commit()
 
     @classmethod
-    def store_products(cls, _uid, _sid, enable=None):
-        """All products of a store"""
-        items = ProductModel.query.join(StoreModel).filter(StoreModel.sid == _sid, StoreModel.user_id == _uid)
+    def store_products(cls, _uid, _sid, page, per_page, enable=None):
+        """
+        All products of a store
+        :return: A SqlAlchemy Pagination Object with list of items
+        """
+        products = ProductModel.query.join(StoreModel).filter(StoreModel.sid == _sid, StoreModel.user_id == _uid)
         if enable is not None:
-            items = items.filter(ProductModel.enable==enable)
-        items = items.order_by(
-            ProductModel.category.desc()).order_by(ProductModel.name.desc()).all()
-        return items
+            products = products.filter(ProductModel.enable==enable)
+        products = products.order_by(
+            ProductModel.category.desc()).order_by(ProductModel.name.desc())\
+            .paginate(page=page, per_page=per_page)
+        return products
 
     @classmethod
     def store_orders(cls, _uid, _sid):

@@ -1,3 +1,5 @@
+import utils
+from configs.constants import MAX_PER_PAGE
 from models.product import ProductModel
 from models.store import StoreModel
 
@@ -100,11 +102,15 @@ class StoreProducts(Resource):
         product_name_search = request.args.get("name", None)
         enable = str_to_bool(request.args.get("enable", None))
 
+        page = int(request.args.get('page', 1))
+        per_page = int(request.args.get('per_page', MAX_PER_PAGE))
+
         if product_name_search:
-            similar_products = ProductModel.find_similar(user_id, sid, product_name_search, enable)
+            similar_products_page = ProductModel.find_similar(user_id, sid, product_name_search, page, per_page, enable)
             return {
                 "status": True,
-                "products": [prod.json() for prod in similar_products]
+                "products": [prod.json() for prod in similar_products_page.items],
+                **utils.page_footer_json(similar_products_page),
             }
 
         store = StoreModel.find_by_id(user_id, sid)
@@ -114,10 +120,14 @@ class StoreProducts(Resource):
                     "error_code": ERROR_CODES["INVALID_STORE"],
                     "message": ERROR_MSG["INVALID_STORE"],
                     }, 200
-        products = StoreModel.store_products(user_id, sid, enable)
-        if isinstance(products, list):
-            product_list = [p.json() for p in products]
-            return {"status": True, "store_id": sid, "products": product_list}, 200
+        products = StoreModel.store_products(user_id, sid, page, per_page, enable)
+        if isinstance(products.items, list):
+            product_list = [p.json() for p in products.items]
+            return {"status": True,
+                    "store_id": sid,
+                    "products": product_list,
+                    **utils.page_footer_json(products),
+                    }, 200
         return {"status": False, "store_id": sid,
                 "error_code": ERROR_CODES["EMPTY_STORE"],
                 "message": ERROR_MSG["EMPTY_STORE"],

@@ -1,7 +1,10 @@
 from flask_restful import Resource, reqparse
+from flask import request
 
 from flask_jwt_extended import jwt_required, get_jwt, get_jwt_identity
 
+import utils
+from configs.constants import MAX_PER_PAGE
 from models.store import StoreModel
 from models.order import CustomerOrderModel
 
@@ -23,9 +26,19 @@ class StoreOrders(Resource):
     @jwt_required()
     def get(self, sid):
         user_id = get_jwt_identity()
-        orders = StoreModel.store_orders(user_id, sid)
-        if isinstance(orders, list):
-            return {"status": True, "orders": [order.json() for order in orders]}, 200
+        _args = request.args
+        date_from = _args.get('date_from')
+        date_till = _args.get('date_till')
+        page = int(request.args.get('page', 1))
+        per_page = int(request.args.get('per_page', MAX_PER_PAGE))
+
+        # orders = StoreModel.store_orders(sid, date_from, date_till, page, per_page)
+        orders = CustomerOrderModel.orders(sid, date_from, date_till, page, per_page)
+        if isinstance(orders.items, list):
+            return {"status": True,
+                    "orders": [order.json() for order in orders.items],
+                    **utils.page_footer_json(orders),
+                    }, 200
         return {"status": False,
                 "error_code": ERROR_CODES["STORE_NOT_FOUND"],
                 "message": ERROR_MSGS["STORE_NOT_FOUND"]
